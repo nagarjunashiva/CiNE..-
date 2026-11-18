@@ -1,0 +1,2946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CiNE.. — Discover. Explore. Watch. Repeat.</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080909'/%3E%3Ctext x='12' y='43' font-family='Arial' font-weight='bold' font-size='32' fill='%23F5F5F5'%3EC%3C/text%3E%3Ccircle cx='42' cy='42' r='5' fill='%23E5242A'/%3E%3Ccircle cx='55' cy='42' r='5' fill='%23E5242A'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cine: { bg: "#080909", surface: "#121414", elev: "#181b1b", text: "#F5F5F5", muted: "#A3A3A3", red: "#E5242A", border: "#1e2222" } },
+                    fontFamily: { sans: ["Inter", "system-ui", "sans-serif"], display: ["Sora", "Inter", "sans-serif"], serif: ["Georgia", "serif"] }
+                }
+            }
+        };
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: #080909;
+            color: #F5F5F5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden
+        }
+
+        ::selection {
+            background: #E5242A;
+            color: #fff
+        }
+
+        :focus-visible {
+            outline: 2px solid #E5242A;
+            outline-offset: 2px;
+            border-radius: 6px
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none
+        }
+
+        .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 8px
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #242828;
+            border-radius: 8px;
+            border: 2px solid #080909
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #080909
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(26px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -500px 0
+            }
+
+            100% {
+                background-position: 500px 0
+            }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #101212 25%, #1a1e1e 40%, #101212 60%);
+            background-size: 900px 100%;
+            animation: shimmer 1.5s linear infinite
+        }
+
+        .anim-hero {
+            animation: fadeUp .9s cubic-bezier(.22, 1, .36, 1) both
+        }
+
+        .anim-hero-d1 {
+            animation: fadeUp .9s .08s cubic-bezier(.22, 1, .36, 1) both
+        }
+
+        .anim-hero-d2 {
+            animation: fadeUp .9s .16s cubic-bezier(.22, 1, .36, 1) both
+        }
+
+        .anim-hero-d3 {
+            animation: fadeUp .9s .24s cubic-bezier(.22, 1, .36, 1) both
+        }
+
+        .page-enter {
+            animation: pageIn .45s ease both
+        }
+
+        .fade-in {
+            animation: fadeIn .5s ease both
+        }
+
+        /* ==================== SLIDING AUTH CARD (Login.css) ==================== */
+        .card {
+            position: relative;
+            width: 840px;
+            max-width: 100%;
+            min-height: 560px;
+            background: #0f1113;
+            border-radius: 28px;
+            box-shadow: 0 35px 90px -15px rgba(0, 0, 0, 0.98), 0 0 50px -10px rgba(229, 36, 42, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            display: flex;
+        }
+
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            background: #080909;
+            transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 10;
+            pointer-events: none;
+            box-shadow: 0 0 60px rgba(229, 36, 42, 0.45);
+        }
+
+        .card-bg-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 25%;
+            filter: brightness(0.85) contrast(1.15) saturate(1.1);
+            transform: scale(1.08);
+            transition: transform 0.8s ease;
+        }
+
+        .card-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(8, 9, 9, 0.78) 0%, rgba(229, 36, 42, 0.38) 50%, rgba(8, 9, 9, 0.92) 100%);
+        }
+
+        .card-bg-badge {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .card-bg.login {
+            transform: translateX(100%);
+        }
+
+        .card-bg:not(.login) {
+            transform: translateX(0);
+        }
+
+        /* Hero Panels */
+        .hero {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 36px;
+            z-index: 15;
+            transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s ease;
+            color: #FFFFFF;
+        }
+
+        .hero-pill {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            background: rgba(229, 36, 42, 0.25);
+            border: 1px solid rgba(229, 36, 42, 0.5);
+            color: #FFFFFF;
+            margin-bottom: 12px;
+        }
+
+        .hero h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+        }
+
+        .hero p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 280px;
+            margin: 0 auto 18px;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+        }
+
+        .hero-perks {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+            text-align: left;
+            max-width: 280px;
+        }
+
+        .hero-perk {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .hero-btn {
+            padding: 12px 34px;
+            border-radius: 9999px;
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-btn:hover {
+            background: #FFFFFF;
+            color: #E5242A;
+            box-shadow: 0 8px 30px rgba(229, 36, 42, 0.55);
+            transform: scale(1.04);
+        }
+
+        .hero.login {
+            right: 0;
+            left: auto;
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .hero.login:not(.active) {
+            transform: translateX(45%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hero.register {
+            left: 0;
+            right: auto;
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .hero.register:not(.active) {
+            transform: translateX(-45%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Forms */
+        .form {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 34px 44px;
+            background: #0f1113;
+            transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s ease;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        .form h2 {
+            font-family: 'Sora', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #FFFFFF;
+            margin-bottom: 2px;
+        }
+
+        .form p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .form form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Input Groups */
+        .auth-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .auth-input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.35);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .auth-input-wrapper:focus-within .auth-input-icon {
+            color: #E5242A;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 11px 40px 11px 40px;
+            font-size: 13px;
+            color: #FFFFFF;
+            outline: none;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+
+        .auth-input:focus {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: #E5242A;
+            box-shadow: 0 0 0 3px rgba(229, 36, 42, 0.18), 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .auth-pass-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.45);
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .auth-pass-toggle:hover {
+            color: #FFFFFF;
+        }
+
+        /* Buttons & Checkbox */
+        .auth-btn-primary {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #E5242A 0%, #ba161c 100%);
+            color: #FFFFFF;
+            border: none;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(229, 36, 42, 0.6);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .auth-btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #f3353b 0%, #E5242A 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px -5px rgba(229, 36, 42, 0.75);
+        }
+
+        .auth-btn-primary:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .auth-btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #FFFFFF;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .auth-remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .auth-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .auth-checkbox {
+            accent-color: #E5242A;
+            cursor: pointer;
+            width: 13px;
+            height: 13px;
+        }
+
+        .auth-forgot-link {
+            color: rgba(255, 255, 255, 0.55);
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .auth-forgot-link:hover {
+            color: #E5242A;
+            text-decoration: underline;
+        }
+
+        /* Watchlist Pop-up Callout */
+        .watchlist-pop-badge {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, rgba(229, 36, 42, 0.18) 0%, rgba(229, 36, 42, 0.06) 100%);
+            border: 1px solid rgba(229, 36, 42, 0.45);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 15px rgba(229, 36, 42, 0.15);
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.96) translateY(-4px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Error and Alert banners */
+        .auth-alert-err {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            background: rgba(229, 36, 42, 0.12);
+            border: 1px solid rgba(229, 36, 42, 0.35);
+            color: #ff6b70;
+            font-size: 11px;
+            margin-bottom: 12px;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* OTP Input */
+        .auth-otp-input {
+            width: 100%;
+            letter-spacing: 10px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            font-family: monospace;
+            padding: 12px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(229, 36, 42, 0.4);
+            border-radius: 12px;
+            color: #FFFFFF;
+            outline: none;
+            margin-bottom: 6px;
+            transition: all 0.25s ease;
+        }
+
+        .auth-otp-input:focus {
+            border-color: #E5242A;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(229, 36, 42, 0.35);
+        }
+
+        .otp-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 12px;
+            font-size: 11px;
+        }
+
+        .otp-timer {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .otp-resend-btn {
+            background: transparent;
+            border: none;
+            color: #E5242A;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            font-size: 11px;
+            text-decoration: underline;
+        }
+
+        .otp-back-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.55);
+            cursor: pointer;
+            padding: 0;
+            font-size: 11px;
+            transition: color 0.2s;
+        }
+
+        .otp-back-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .auth-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 40;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.55);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-close-btn:hover {
+            border-color: #E5242A;
+            color: #E5242A;
+            transform: scale(1.05);
+        }
+
+        .auth-backend-badge {
+            position: absolute;
+            top: 18px;
+            left: 20px;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.online {
+            background: #34d399;
+            box-shadow: 0 0 10px #34d399;
+        }
+
+        .status-dot.offline {
+            background: #fbbf24;
+            box-shadow: 0 0 10px #fbbf24;
+        }
+
+        .mobile-auth-tabs {
+            display: none;
+        }
+
+        .form.login {
+            left: 0;
+            right: auto;
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 5;
+        }
+
+        .form.login:not(.active) {
+            transform: translateX(-40%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .form.register {
+            left: 50%;
+            right: auto;
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 5;
+        }
+
+        .form.register:not(.active) {
+            transform: translateX(40%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                min-height: auto;
+                max-height: 90vh;
+                flex-direction: column;
+                padding-top: 50px;
+            }
+            .card-bg {
+                display: none;
+            }
+            .hero {
+                display: none !important;
+            }
+            .form {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 10px 20px 24px;
+                left: 0 !important;
+                transform: none !important;
+            }
+            .form:not(.active) {
+                display: none !important;
+            }
+            .mobile-auth-tabs {
+                display: flex;
+                width: calc(100% - 40px);
+                margin: 0 20px 10px;
+                background: rgba(255, 255, 255, 0.06);
+                border-radius: 12px;
+                padding: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+            .mobile-auth-tab {
+                flex: 1;
+                padding: 8px 12px;
+                font-size: 12px;
+                font-weight: 700;
+                border-radius: 8px;
+                border: none;
+                color: rgba(255, 255, 255, 0.6);
+                background: transparent;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .mobile-auth-tab.active {
+                background: #E5242A;
+                color: #FFFFFF;
+                box-shadow: 0 4px 12px rgba(229, 36, 42, 0.4);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div
+            style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#080909;color:#F5F5F5;font-family:Inter,sans-serif">
+            <div style="font-weight:800;font-size:28px;letter-spacing:-1px">CiNE<span style="color:#E5242A">..</span>
+            </div>
+            <div style="width:44px;height:3px;border-radius:99px;background:#1e2222;overflow:hidden">
+                <div style="width:50%;height:100%;background:#E5242A;animation:shimmer 1s linear infinite"></div>
+            </div>
+        </div>
+    </div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback, createContext, useContext } = React;
+
+        /* ============================================================
+           CONFIG — paste a TMDB API key (or read token) to go live.
+           With no key configured, CiNE.. runs on a curated local dataset.
+        ============================================================ */
+        const PROXY_BASE = "https://cine-proxy.nagarjunashivaa.workers.dev";
+        const CONFIG = { TMDB_API_KEY: "e657810f1e0dcb2d3d6e2e5144eb224d", TMDB_READ_TOKEN: "", TMDB_BASE: `${PROXY_BASE}/3` };
+
+        // 4K Ultra-HD Image URLs (Primary via Cloudflare proxy, Fallback via direct TMDB)
+        const IMG_POSTER = p => p ? `${PROXY_BASE}/image/t/p/w780${p}` : null;
+        const IMG_DIRECT_POSTER = p => p ? `https://image.tmdb.org/t/p/w780${p}` : null;
+        const IMG_BACKDROP = p => p ? `${PROXY_BASE}/image/t/p/original${p}` : null;
+        const IMG_DIRECT_BACKDROP = p => p ? `https://image.tmdb.org/t/p/original${p}` : null;
+        const PICSUM = id => `https://picsum.photos/seed/cine-${id}/1600/900?grayscale`;
+
+        const GENRES = { 28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime", 99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History", 27: "Horror", 10402: "Music", 9648: "Mystery", 10749: "Romance", 878: "Sci-Fi", 53: "Thriller", 10770: "TV Movie", 10752: "War", 37: "Western" };
+        const GENRE_ID = Object.fromEntries(Object.entries(GENRES).map(([id, n]) => [n, +id]));
+        const HOME_PILLS = ["All", "Action", "Drama", "Sci-Fi", "Thriller", "Comedy", "Animation"];
+        const EXPLORE_GENRES = ["All", "Action", "Adventure", "Animation", "Comedy", "Crime", "Drama", "Fantasy", "Music", "Mystery", "Romance", "Sci-Fi", "Thriller"];
+
+        const fmtRuntime = min => { if (!min) return "—"; const h = Math.floor(min / 60), m = min % 60; return h ? `${h}h ${m}m` : `${m}m`; };
+        const movieGenres = m => (m.genres && m.genres.length ? m.genres : (m.genreIds || []).map(id => GENRES[id]).filter(Boolean));
+        const delay = ms => new Promise(r => setTimeout(r, ms));
+
+        /* ============================= SAMPLE DATASET ============================= */
+        const mv = (id, title, year, date, rating, runtime, genreIds, popularity, overview, poster, backdrop, director, cast, trailer, extra) => ({ id, title, year, date, rating, runtime, genreIds, popularity, overview, poster, backdrop, director, cast, trailer: trailer || null, ...(extra || {}) });
+
+        const SAMPLE = [
+            mv(889737, "Joker: Folie à Deux", "2024", "2024-10-04", 7.1, 138, [18, 10402, 53], 84,
+                "Arthur Fleck returns in a haunting musical journey that blurs the line between love, madness and reality.",
+                "/aciP8Km0waTLXEYf5ybFK5CSUxl.jpg", "/uKb22E0NLzr4oe4xV55OMmImSLn.jpg", "Todd Phillips",
+                [{ name: "Joaquin Phoenix", character: "Arthur Fleck" }, { name: "Lady Gaga", character: "Harleen 'Lee' Quinzel" }, { name: "Brendan Gleeson", character: "Jackie Sullivan" }, { name: "Catherine Keener", character: "Maryanne Stewart" }], null,
+                { displayTitle: "JOKER", tagline: "Folie à Deux" }),
+            mv(693134, "Dune: Part Two", "2024", "2024-03-01", 8.5, 166, [28, 12, 878], 100,
+                "Paul Atreides unites with the Fremen and seeks revenge against the conspirators who destroyed his family, as war spreads across Arrakis.",
+                "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", "/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg", "Denis Villeneuve",
+                [{ name: "Timothée Chalamet", character: "Paul Atreides" }, { name: "Zendaya", character: "Chani" }, { name: "Rebecca Ferguson", character: "Lady Jessica" }, { name: "Austin Butler", character: "Feyd-Rautha" }], "Way9Dexny3w"),
+            mv(157336, "Interstellar", "2014", "2014-11-07", 8.7, 169, [12, 18, 878], 97,
+                "With Earth becoming uninhabitable, a team of explorers travels through a wormhole in search of a new home for humanity.",
+                "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", "/pbrkL804c8yAv3zBZR4QPEafpAR.jpg", "Christopher Nolan",
+                [{ name: "Matthew McConaughey", character: "Cooper" }, { name: "Anne Hathaway", character: "Brand" }, { name: "Jessica Chastain", character: "Murph" }, { name: "Michael Caine", character: "Prof. Brand" }], "zSWdZVtXT7E"),
+            mv(872585, "Oppenheimer", "2023", "2023-07-21", 8.3, 180, [18, 36, 53], 95,
+                "The story of J. Robert Oppenheimer and the creation of the atomic bomb — a triumph that could never be undone.",
+                "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", "/rLb2cwF3Pazuxaj0sRXQ037tGI1.jpg", "Christopher Nolan",
+                [{ name: "Cillian Murphy", character: "J. Robert Oppenheimer" }, { name: "Emily Blunt", character: "Kitty Oppenheimer" }, { name: "Matt Damon", character: "Leslie Groves" }, { name: "Robert Downey Jr.", character: "Lewis Strauss" }], "uYPbbksJxIg"),
+            mv(414906, "The Batman", "2022", "2022-03-04", 7.8, 176, [80, 9648, 53], 92,
+                "In his second year of fighting crime, Batman uncovers corruption in Gotham City while pursuing the sadistic Riddler.",
+                "/74xTEgt7R36Fpooo50r9T25onhq.jpg", "/b0PlSFdDwbyK0cf5RxwDpaOJQvQ.jpg", "Matt Reeves",
+                [{ name: "Robert Pattinson", character: "Bruce Wayne" }, { name: "Zoë Kravitz", character: "Selina Kyle" }, { name: "Paul Dano", character: "The Riddler" }, { name: "Colin Farrell", character: "Oz Cobb" }], null),
+            mv(27205, "Inception", "2010", "2010-07-16", 8.8, 148, [28, 878, 12], 90,
+                "A skilled thief who steals secrets from deep within the subconscious is offered one last job: plant an idea instead of stealing one.",
+                "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg", "Christopher Nolan",
+                [{ name: "Leonardo DiCaprio", character: "Dom Cobb" }, { name: "Joseph Gordon-Levitt", character: "Arthur" }, { name: "Elliot Page", character: "Ariadne" }, { name: "Tom Hardy", character: "Eames" }], "YoHD9XEInc0"),
+            mv(496243, "Parasite", "2019", "2019-10-11", 8.6, 132, [35, 53, 18], 88,
+                "A poor family schemes its way into the employ of a wealthy household, triggering an unexpected chain of events.",
+                "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", "/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg", "Bong Joon Ho",
+                [{ name: "Song Kang-ho", character: "Ki-taek" }, { name: "Lee Sun-kyun", character: "Dong-ik" }, { name: "Cho Yeo-jeong", character: "Yeon-kyo" }, { name: "Choi Woo-shik", character: "Ki-woo" }], "5xH0HfJHsaY"),
+            mv(244786, "Whiplash", "2014", "2014-10-10", 8.5, 106, [18, 10402], 86,
+                "A young drummer enrolls at a cut-throat music conservatory where a ruthless instructor pushes him beyond his limits.",
+                "/7fn624j5lj3xTme2SgiLCeuedmO.jpg", "/6bbZ6XyvgfjhQwbplnUh1LSj1ky.jpg", "Damien Chazelle",
+                [{ name: "Miles Teller", character: "Andrew Neiman" }, { name: "J.K. Simmons", character: "Terence Fletcher" }, { name: "Melissa Benoist", character: "Nicole" }], "7d_jQycdQGo"),
+            mv(238, "The Godfather", "1972", "1972-03-24", 9.2, 175, [18, 80], 72,
+                "The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant youngest son.",
+                "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg", "/tmU7GeKVybMWFButWEGl2M4GeiP.jpg", "Francis Ford Coppola",
+                [{ name: "Marlon Brando", character: "Vito Corleone" }, { name: "Al Pacino", character: "Michael Corleone" }, { name: "James Caan", character: "Sonny Corleone" }, { name: "Robert Duvall", character: "Tom Hagen" }], null),
+            mv(550, "Fight Club", "1999", "1999-10-15", 8.8, 139, [18, 53], 66,
+                "An insomniac office worker and a charismatic soap maker form an underground fight club that evolves into something far more dangerous.",
+                "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg", "David Fincher",
+                [{ name: "Edward Norton", character: "The Narrator" }, { name: "Brad Pitt", character: "Tyler Durden" }, { name: "Helena Bonham Carter", character: "Marla Singer" }], null),
+            mv(129, "Spirited Away", "2001", "2001-07-20", 8.9, 125, [16, 14, 10751], 50,
+                "A young girl wanders into a world of spirits and must work in a mysterious bathhouse to free her transformed parents.",
+                "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg", "/Ab8mkHmkYADjU7wQiOkia9BzGvS.jpg", "Hayao Miyazaki",
+                [{ name: "Rumi Hiiragi", character: "Chihiro" }, { name: "Miyu Irino", character: "Haku" }, { name: "Mari Natsuki", character: "Yubaba" }], "ByXuk9QqQkk"),
+            mv(155, "The Dark Knight", "2008", "2008-07-18", 9.0, 152, [18, 28, 80, 53], 70,
+                "Batman faces the Joker, a criminal mastermind whose chaos pushes Gotham — and its heroes — to the edge.",
+                "/qJ2tW6WMUDux911r6m7haRef0WH.jpg", "/hqkIcbrOHL86UncnHIsHVcVmzue.jpg", "Christopher Nolan",
+                [{ name: "Christian Bale", character: "Bruce Wayne" }, { name: "Heath Ledger", character: "Joker" }, { name: "Aaron Eckhart", character: "Harvey Dent" }, { name: "Michael Caine", character: "Alfred" }], "EXeTwQWrcwY"),
+            mv(680, "Pulp Fiction", "1994", "1994-10-14", 8.7, 154, [53, 80], 68,
+                "The lives of two mob hitmen, a boxer and a gangster's wife intertwine in a series of violent, darkly comic incidents.",
+                "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg", "/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg", "Quentin Tarantino",
+                [{ name: "John Travolta", character: "Vincent Vega" }, { name: "Samuel L. Jackson", character: "Jules Winnfield" }, { name: "Uma Thurman", character: "Mia Wallace" }, { name: "Bruce Willis", character: "Butch Coolidge" }], null),
+            mv(19995, "Avatar", "2009", "2009-12-18", 7.9, 162, [28, 12, 14, 878], 54,
+                "A paraplegic Marine dispatched to Pandora on a unique mission becomes torn between following orders and protecting a new world.",
+                "/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg", "/o0s4XsEDfDlvit5pDRKjzXR4pp2.jpg", "James Cameron",
+                [{ name: "Sam Worthington", character: "Jake Sully" }, { name: "Zoe Saldaña", character: "Neytiri" }, { name: "Sigourney Weaver", character: "Dr. Grace Augustine" }], "5PSNL1qE6VY"),
+            mv(862, "Toy Story", "1995", "1995-11-22", 8.3, 81, [16, 35, 10751], 52,
+                "A cowboy doll feels threatened when a new space-ranger action figure arrives and becomes the favourite toy.",
+                "/uXDfjJbdP4apWxoQzHXdwo1l3gC.jpg", "/dji4Fm0gCDVb9DQQMRvAI8YNnTz.jpg", "John Lasseter",
+                [{ name: "Tom Hanks", character: "Woody" }, { name: "Tim Allen", character: "Buzz Lightyear" }, { name: "Don Rickles", character: "Mr. Potato Head" }], null),
+            mv(278, "The Shawshank Redemption", "1994", "1994-09-23", 9.3, 142, [18, 80], 64,
+                "Imprisoned for a crime he didn't commit, banker Andy Dufresne forms an unlikely friendship and never loses hope.",
+                "/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg", "/avedvodAZUcwqevBfm8p4G2NziQ.jpg", "Frank Darabont",
+                [{ name: "Tim Robbins", character: "Andy Dufresne" }, { name: "Morgan Freeman", character: "Ellis 'Red' Redding" }, { name: "Bob Gunton", character: "Warden Norton" }], null),
+            mv(13, "Forrest Gump", "1994", "1994-07-06", 8.8, 142, [35, 18, 10749], 62,
+                "The extraordinary life of a kind-hearted man from Alabama unfolds against decades of American history.",
+                "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg", "/qdIMHd4sEfJSckfVJfKQvisL02a.jpg", "Robert Zemeckis",
+                [{ name: "Tom Hanks", character: "Forrest Gump" }, { name: "Robin Wright", character: "Jenny Curran" }, { name: "Gary Sinise", character: "Lt. Dan Taylor" }], "bLvqoHBptjg"),
+            mv(122, "The Lord of the Rings: The Return of the King", "2003", "2003-12-17", 8.9, 201, [12, 14, 28], 60,
+                "The final confrontation for Middle-earth begins as Frodo and Sam edge closer to Mount Doom with the One Ring.",
+                "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg", "/lXhgCODAbBXL5buk9yEmTpOoOgR.jpg", "Peter Jackson",
+                [{ name: "Elijah Wood", character: "Frodo" }, { name: "Ian McKellen", character: "Gandalf" }, { name: "Viggo Mortensen", character: "Aragorn" }, { name: "Sean Astin", character: "Sam" }], null),
+            mv(603, "The Matrix", "1999", "1999-03-31", 8.7, 136, [28, 878], 74,
+                "A hacker discovers that reality as he knows it is a simulation — and that he may be the one destined to free humanity.",
+                "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg", "/fNG7i7RqMErkcqhohV2a6cV1Ehy.jpg", "Lana & Lilly Wachowski",
+                [{ name: "Keanu Reeves", character: "Neo" }, { name: "Laurence Fishburne", character: "Morpheus" }, { name: "Carrie-Anne Moss", character: "Trinity" }], "vKQi3bBA1y8"),
+            mv(98, "Gladiator", "2000", "2000-05-05", 8.5, 155, [28, 18, 12], 58,
+                "A betrayed Roman general fights his way through the gladiatorial arena to avenge his family and his emperor.",
+                "/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg", "/Ar7QuJ7sJEiC0oP3IixfVBKIQat.jpg", "Ridley Scott",
+                [{ name: "Russell Crowe", character: "Maximus" }, { name: "Joaquin Phoenix", character: "Commodus" }, { name: "Connie Nielsen", character: "Lucilla" }], null),
+            mv(313369, "La La Land", "2016", "2016-12-09", 8.0, 128, [35, 18, 10402, 10749], 76,
+                "An aspiring actress and a jazz musician chase their dreams in Los Angeles while falling in love.",
+                "/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg", "/fp6X6yhgcxzxCpmM0EVC6V9B8XB.jpg", "Damien Chazelle",
+                [{ name: "Ryan Gosling", character: "Sebastian" }, { name: "Emma Stone", character: "Mia" }, { name: "John Legend", character: "Keith" }], "0pdqf4P9MB8"),
+            mv(335984, "Blade Runner 2049", "2017", "2017-10-06", 8.0, 164, [878, 18], 78,
+                "A young blade runner unearths a long-buried secret that leads him to track down former blade runner Rick Deckard.",
+                "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg", "/ilRyazdMJwN05exqhwK4tMKBYZs.jpg", "Denis Villeneuve",
+                [{ name: "Ryan Gosling", character: "K" }, { name: "Harrison Ford", character: "Rick Deckard" }, { name: "Ana de Armas", character: "Joi" }], null),
+            mv(324857, "Spider-Man: Into the Spider-Verse", "2018", "2018-12-14", 8.6, 117, [16, 28, 12], 80,
+                "Teenager Miles Morales becomes Spider-Man and crosses dimensions to team up with counterparts from other universes.",
+                "/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg", "/4HodYYKEIsGOdinkGi2Ucz6X9i0.jpg", "Bob Persichetti, Peter Ramsey & Rodney Rothman",
+                [{ name: "Shameik Moore", character: "Miles Morales" }, { name: "Jake Johnson", character: "Peter B. Parker" }, { name: "Hailee Steinfeld", character: "Gwen Stacy" }], null),
+            mv(545611, "Everything Everywhere All at Once", "2022", "2022-03-25", 7.9, 139, [28, 12, 878], 82,
+                "An exhausted laundromat owner is swept into a multiverse adventure and must channel her other lives to save existence itself.",
+                "/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg", "/ss0Os3uWJfQAENILHZUdX8Tt1OC.jpg", "Daniel Kwan & Daniel Scheinert",
+                [{ name: "Michelle Yeoh", character: "Evelyn Wang" }, { name: "Ke Huy Quan", character: "Waymond Wang" }, { name: "Stephanie Hsu", character: "Joy Wang" }, { name: "Jamie Lee Curtis", character: "Deirdre" }], null),
+            mv(68718, "Django Unchained", "2012", "2012-12-25", 8.2, 165, [18, 37], 56,
+                "A freed slave teams up with a German bounty hunter to rescue his wife from a brutal Mississippi plantation owner.",
+                "/7oWY8VDWW7thTzWh3OKYRkWUlD5.jpg", "/2oZklIzUbvZXXzIFzv7Hi68d6xf.jpg", "Quentin Tarantino",
+                [{ name: "Jamie Foxx", character: "Django" }, { name: "Christoph Waltz", character: "Dr. King Schultz" }, { name: "Leonardo DiCaprio", character: "Calvin Candie" }], null),
+        ];
+
+        const byId = id => SAMPLE.find(m => m.id === +id);
+        const POPULAR_IDS = [238, 550, 129, 155, 680, 19995, 862, 98, 603, 313369, 335984, 324857, 68718, 545611, 13, 122, 278];
+        const FEATURED = [
+            { id: 889737, label: "NOW IN THEATERS" },
+            { id: 693134, label: "NOW TRENDING" },
+            { id: 872585, label: "CRITICALLY ACCLAIMED" },
+            { id: 414906, label: "FAN FAVORITE" },
+            { id: 157336, label: "MODERN CLASSIC" },
+        ];
+
+        /* ============================= DATA SERVICE ============================= */
+        function normalizeTmdb(m) {
+            return {
+                id: m.id, title: m.title || m.name || "Untitled", year: (m.release_date || "").slice(0, 4), date: m.release_date || "",
+                rating: m.vote_average ? Math.round(m.vote_average * 10) / 10 : null, runtime: m.runtime || null,
+                genreIds: m.genre_ids || (m.genres || []).map(g => g.id), genres: (m.genres || []).map(g => g.name),
+                overview: m.overview || "", poster: m.poster_path || null, backdrop: m.backdrop_path || null, popularity: m.popularity || 0
+            };
+        }
+        async function tmdb(path) {
+            const headers = { accept: "application/json" }; let url = CONFIG.TMDB_BASE + path;
+            if (CONFIG.TMDB_READ_TOKEN) headers.Authorization = "Bearer " + CONFIG.TMDB_READ_TOKEN;
+            else url += (path.includes("?") ? "&" : "?") + "api_key=" + encodeURIComponent(CONFIG.TMDB_API_KEY);
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3500);
+            try {
+                const res = await fetch(url, { headers, signal: controller.signal });
+                if (!res.ok) throw new Error("TMDB " + res.status);
+                return await res.json();
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+        const ApiService = {
+            live: true,
+            async featured() {
+                const d = await tmdb("/trending/movie/week"); const labels = ["NOW TRENDING", "TRENDING THIS WEEK", "POPULAR NOW", "MUST WATCH", "EDITOR'S PICK"];
+                return d.results.slice(0, 5).map((m, i) => ({ ...normalizeTmdb(m), label: labels[i] }));
+            },
+            async trending() { const d = await tmdb("/trending/movie/week"); return d.results.slice(0, 14).map(normalizeTmdb); },
+            async popular(genre) {
+                const g = genre && genre !== "All" ? `&with_genres=${GENRE_ID[genre]}` : "";
+                const path = (genre && genre !== "All")
+                    ? `/discover/movie?sort_by=popularity.desc&include_adult=false&vote_count.gte=30${g}`
+                    : `/movie/popular?page=1`;
+                const d = await tmdb(path);
+                return d.results.map(normalizeTmdb);
+            },
+            async topRated() { const d = await tmdb("/movie/top_rated"); return d.results.slice(0, 6).map(normalizeTmdb); },
+            async explore({ query, genre, sort }) {
+                const sortMap = { popularity: "popularity.desc", rating: "vote_average.desc", date: "primary_release_date.desc" };
+                let path;
+                if (query) path = `/search/movie?query=${encodeURIComponent(query)}&include_adult=false`;
+                else path = `/discover/movie?sort_by=${sortMap[sort] || sortMap.popularity}&include_adult=false&vote_count.gte=30${genre !== "All" ? `&with_genres=${GENRE_ID[genre]}` : ""}`;
+                const d = await tmdb(path); let r = d.results.map(normalizeTmdb);
+                if (query) {
+                    if (genre && genre !== "All") r = r.filter(m => (m.genreIds || []).includes(GENRE_ID[genre]));
+                    if (sort === "rating") r.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                    if (sort === "date") r.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+                }
+                return r;
+            },
+            async details(id) {
+                const d = await tmdb(`/movie/${id}?append_to_response=credits,videos,similar`);
+                const m = normalizeTmdb(d);
+                m.cast = (d.credits?.cast || []).slice(0, 8).map(p => ({ name: p.name, character: p.character }));
+                m.director = (d.credits?.crew || []).find(p => p.job === "Director")?.name || null;
+                m.trailer = (d.videos?.results || []).find(v => v.site === "YouTube" && v.type === "Trailer")?.key || (d.videos?.results || []).find(v => v.site === "YouTube")?.key || null;
+                m.similar = (d.similar?.results || []).slice(0, 12).map(normalizeTmdb);
+                return m;
+            }
+        };
+        const SampleService = {
+            live: false,
+            async featured() { await delay(350); return FEATURED.map(f => ({ ...byId(f.id), label: f.label })); },
+            async trending() { await delay(350); return [...SAMPLE].sort((a, b) => b.popularity - a.popularity).slice(0, 10); },
+            async popular(genre) {
+                await delay(280); let r = POPULAR_IDS.map(byId).filter(Boolean);
+                if (genre && genre !== "All") r = r.filter(m => m.genreIds.includes(GENRE_ID[genre])); return r;
+            },
+            async topRated() { await delay(300); return [...SAMPLE].sort((a, b) => b.rating - a.rating).slice(0, 6); },
+            async explore({ query, genre, sort }) {
+                await delay(320); let r = [...SAMPLE];
+                if (query) { const q = query.toLowerCase(); r = r.filter(m => m.title.toLowerCase().includes(q) || (m.overview || "").toLowerCase().includes(q)); }
+                if (genre && genre !== "All") r = r.filter(m => m.genreIds.includes(GENRE_ID[genre]));
+                if (sort === "rating") r.sort((a, b) => b.rating - a.rating);
+                else if (sort === "date") r.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+                else r.sort((a, b) => b.popularity - a.popularity);
+                return r;
+            },
+            async details(id) {
+                await delay(280); const m = byId(id); if (!m) throw new Error("not found");
+                const similar = SAMPLE.filter(x => x.id !== m.id && x.genreIds.some(g => m.genreIds.includes(g))).sort((a, b) => b.popularity - a.popularity).slice(0, 10);
+                return { ...m, similar };
+            }
+        };
+        let tmdbFailed = false;
+        const DataService = {
+            async featured() {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { const res = await ApiService.featured(); if (res && res.length) return res; }
+                    catch (e) { console.warn("TMDB featured failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.featured();
+            },
+            async trending() {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { const res = await ApiService.trending(); if (res && res.length) return res; }
+                    catch (e) { console.warn("TMDB trending failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.trending();
+            },
+            async popular(genre) {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { const res = await ApiService.popular(genre); if (res && res.length) return res; }
+                    catch (e) { console.warn("TMDB popular failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.popular(genre);
+            },
+            async topRated() {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { const res = await ApiService.topRated(); if (res && res.length) return res; }
+                    catch (e) { console.warn("TMDB topRated failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.topRated();
+            },
+            async explore(opts) {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { const res = await ApiService.explore(opts); if (res && res.length) return res; }
+                    catch (e) { console.warn("TMDB explore failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.explore(opts);
+            },
+            async details(id) {
+                if ((CONFIG.TMDB_API_KEY || CONFIG.TMDB_READ_TOKEN) && !tmdbFailed) {
+                    try { return await ApiService.details(id); }
+                    catch (e) { console.warn("TMDB details failed, falling back to local dataset:", e); tmdbFailed = true; }
+                }
+                return SampleService.details(id);
+            }
+        };
+
+        /* ============================= ROUTER ============================= */
+        function parseHash() {
+            let h = window.location.hash.replace(/^#/, ""); if (!h) h = "/";
+            const [path, qs] = h.split("?");
+            return { path, query: Object.fromEntries(new URLSearchParams(qs || "")) };
+        }
+        function useRoute() {
+            const [r, setR] = useState(parseHash);
+            useEffect(() => { const f = () => setR(parseHash()); window.addEventListener("hashchange", f); return () => window.removeEventListener("hashchange", f); }, []);
+            return r;
+        }
+
+        /* ============================= CONTEXTS ============================= */
+        const ToastCtx = createContext({ show: () => { } });
+        const useToast = () => useContext(ToastCtx);
+        function ToastProvider({ children }) {
+            const [t, setT] = useState(null); const timer = useRef(null);
+            const show = useCallback((msg, icon) => { setT({ msg, icon, key: Date.now() }); clearTimeout(timer.current); timer.current = setTimeout(() => setT(null), 2800); }, []);
+
+            useEffect(() => {
+                try {
+                    const flash = sessionStorage.getItem("cine.flash_toast");
+                    if (flash) {
+                        sessionStorage.removeItem("cine.flash_toast");
+                        const parsed = JSON.parse(flash);
+                        if (parsed && parsed.message) {
+                            setTimeout(() => show(parsed.message, parsed.icon || "sparkles"), 250);
+                        }
+                    }
+                } catch {}
+            }, [show]);
+
+            return <ToastCtx.Provider value={{ show }}>{children}
+                {t && <div key={t.key} className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] fade-in">
+                    <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-cine-elev/95 backdrop-blur px-5 py-3 shadow-2xl shadow-black/60">
+                        <span className="text-cine-red"><Icon name={t.icon || "check"} size={16} /></span>
+                        <span className="text-sm font-medium whitespace-nowrap">{t.msg}</span>
+                    </div>
+                </div>}
+            </ToastCtx.Provider>;
+        }
+
+        /* ============================= AUTH CONTEXT & BACKEND API ============================= */
+        const AUTH_KEY = "cine.auth.user.v1";
+        const TOKEN_KEY = "cine.auth.token.v1";
+        const API_BASE = "http://localhost:5000/api/auth";
+
+        const AuthCtx = createContext();
+        const useAuth = () => useContext(AuthCtx);
+
+        function AuthProvider({ children }) {
+            const toast = useToast();
+            const [user, setUser] = useState(() => {
+                try {
+                    const saved = localStorage.getItem(AUTH_KEY);
+                    if (!saved) return null;
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.badge) {
+                        delete parsed.badge;
+                        try { localStorage.setItem(AUTH_KEY, JSON.stringify(parsed)); } catch {}
+                    }
+                    return parsed;
+                } catch { return null; }
+            });
+            const [token, setToken] = useState(() => {
+                try { return localStorage.getItem(TOKEN_KEY) || null; } catch { return null; }
+            });
+            const [backendOnline, setBackendOnline] = useState(false);
+            const [modal, setModal] = useState({ open: false, tab: "signin", email: "", previewUrl: null });
+
+            // Check backend health
+            useEffect(() => {
+                let active = true;
+                const checkHealth = async () => {
+                    try {
+                        const res = await fetch("http://localhost:5000/api/health", { method: "GET" });
+                        if (res.ok && active) setBackendOnline(true);
+                    } catch {
+                        if (active) setBackendOnline(false);
+                    }
+                };
+                checkHealth();
+                const interval = setInterval(checkHealth, 15000);
+                return () => { active = false; clearInterval(interval); };
+            }, []);
+
+            // Check token validity on boot
+            useEffect(() => {
+                if (token && backendOnline) {
+                    fetch(`${API_BASE}/me`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }).then(r => r.json()).then(data => {
+                        if (data.success && data.user) {
+                            setUser(u => ({ ...u, ...data.user }));
+                        }
+                    }).catch(() => {});
+                }
+            }, [token, backendOnline]);
+
+            const openAuth = useCallback((tab = "signin", extra = {}) => {
+                setModal(m => ({ ...m, open: true, tab, ...extra }));
+            }, []);
+
+            const closeAuth = useCallback(() => setModal(m => ({ ...m, open: false, email: "", reason: null, pendingMovie: null, previewUrl: null })), []);
+            const clearPendingMovie = useCallback(() => setModal(m => ({ ...m, pendingMovie: null, reason: null })), []);
+
+            // Real Registration (Sends OTP via Nodemailer & saves to MongoDB)
+            const register = useCallback(async (name, email, password) => {
+                try {
+                    const res = await fetch(`${API_BASE}/register`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name, email, password })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || "Registration failed");
+                    }
+                    toast.show("Verification code sent to your email!", "mail");
+                    setModal(m => ({ ...m, email: data.email, previewUrl: data.previewUrl }));
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast]);
+
+            // Verify OTP
+            const verifyOtp = useCallback(async (email, otp) => {
+                try {
+                    const res = await fetch(`${API_BASE}/verify-otp`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, otp })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || "Verification failed");
+                    }
+                    const loggedUser = { ...data.user, joined: "Nov 2026" };
+                    setUser(loggedUser);
+                    setToken(data.token);
+                    try {
+                        localStorage.setItem(AUTH_KEY, JSON.stringify(loggedUser));
+                        localStorage.setItem(TOKEN_KEY, data.token);
+                        sessionStorage.setItem("cine.flash_toast", JSON.stringify({ message: `Email verified! Welcome to CiNE, ${loggedUser.name}!`, icon: "sparkles" }));
+                    } catch {}
+                    closeAuth();
+                    setTimeout(() => { window.location.reload(); }, 200);
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast, closeAuth]);
+
+            // Resend OTP
+            const resendOtp = useCallback(async (email) => {
+                try {
+                    const res = await fetch(`${API_BASE}/resend-otp`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) throw new Error(data.message || "Failed to resend code");
+                    toast.show("New verification code sent!", "mail");
+                    setModal(m => ({ ...m, previewUrl: data.previewUrl || m.previewUrl }));
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast]);
+
+            // Real Login (MongoDB verification)
+            const login = useCallback(async (email, password) => {
+                try {
+                    const res = await fetch(`${API_BASE}/login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await res.json();
+                    if (data.requireOtp) {
+                        toast.show("Please enter verification code sent to your email", "mail");
+                        return { success: false, requireOtp: true, email: data.email, previewUrl: data.previewUrl };
+                    }
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || "Invalid credentials");
+                    }
+                    const loggedUser = { ...data.user, joined: "Nov 2026" };
+                    setUser(loggedUser);
+                    setToken(data.token);
+                    try {
+                        localStorage.setItem(AUTH_KEY, JSON.stringify(loggedUser));
+                        localStorage.setItem(TOKEN_KEY, data.token);
+                        sessionStorage.setItem("cine.flash_toast", JSON.stringify({ message: `Welcome back, ${loggedUser.name}!`, icon: "sparkles" }));
+                    } catch {}
+                    closeAuth();
+                    setTimeout(() => { window.location.reload(); }, 200);
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast, closeAuth]);
+
+            // Forgot Password
+            const forgotPassword = useCallback(async (email) => {
+                try {
+                    const res = await fetch(`${API_BASE}/forgot-password`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) throw new Error(data.message || "Failed to send reset code");
+                    toast.show("Password reset code sent to your email", "mail");
+                    setModal({ open: true, tab: "reset", email, previewUrl: data.previewUrl });
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast]);
+
+            // Reset Password
+            const resetPassword = useCallback(async (email, otp, newPassword) => {
+                try {
+                    const res = await fetch(`${API_BASE}/reset-password`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, otp, newPassword })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) throw new Error(data.message || "Failed to reset password");
+                    toast.show("Password reset! You can now sign in.", "check");
+                    setModal({ open: true, tab: "signin", email });
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast]);
+
+            // Social Login (Google / Gmail, Facebook, Twitter)
+            const socialLogin = useCallback(async ({ provider, email, name, avatar, providerId }) => {
+                try {
+                    const res = await fetch(`${API_BASE}/social-login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ provider, email, name, avatar, providerId })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || `Failed to sign in with ${provider}`);
+                    }
+                    const badge = provider === "google" ? "Google Verified" : provider === "facebook" ? "Facebook Verified" : "X / Twitter Verified";
+                    const loggedUser = { ...data.user, joined: "Nov 2026" };
+                    setUser(loggedUser);
+                    setToken(data.token);
+                    try {
+                        localStorage.setItem(AUTH_KEY, JSON.stringify(loggedUser));
+                        localStorage.setItem(TOKEN_KEY, data.token);
+                    } catch {}
+                    toast.show(data.message || `Signed in with ${provider}!`, "sparkles");
+                    closeAuth();
+                    return { success: true, data };
+                } catch (err) {
+                    toast.show(err.message, "triangle-alert");
+                    return { success: false, error: err.message };
+                }
+            }, [toast, closeAuth]);
+
+            // Logout
+            const logout = useCallback(() => {
+                setUser(null);
+                setToken(null);
+                try {
+                    localStorage.removeItem(AUTH_KEY);
+                    localStorage.removeItem(TOKEN_KEY);
+                    localStorage.removeItem("cine.watchlist.v1");
+                    sessionStorage.setItem("cine.flash_toast", JSON.stringify({ message: "Signed out successfully", icon: "log-out" }));
+                } catch {}
+                setTimeout(() => {
+                    window.location.hash = "#/";
+                    window.location.reload();
+                }, 150);
+            }, []);
+
+            const value = useMemo(() => ({
+                user,
+                token,
+                isAuth: !!user,
+                backendOnline,
+                modal,
+                openAuth,
+                closeAuth,
+                clearPendingMovie,
+                login,
+                register,
+                verifyOtp,
+                resendOtp,
+                forgotPassword,
+                resetPassword,
+                socialLogin,
+                logout
+            }), [user, token, backendOnline, modal, openAuth, closeAuth, clearPendingMovie, login, register, verifyOtp, resendOtp, forgotPassword, resetPassword, socialLogin, logout]);
+
+            return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
+        }
+
+        const WLCtx = createContext();
+        const useWatchlist = () => useContext(WLCtx);
+        const WL_KEY = "cine.watchlist.v1";
+        function WatchlistProvider({ children }) {
+            const toast = useToast();
+            const auth = useAuth();
+            const [items, setItems] = useState(() => {
+                try {
+                    const v = JSON.parse(localStorage.getItem(WL_KEY));
+                    return Array.isArray(v) ? v : [];
+                } catch (e) { return []; }
+            });
+
+            // If user logs in with token, sync watchlist from MongoDB
+            useEffect(() => {
+                if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
+                    fetch("http://localhost:5000/api/auth/watchlist", {
+                        headers: { Authorization: `Bearer ${auth.token}` }
+                    }).then(r => r.json()).then(data => {
+                        if (data.success && Array.isArray(data.watchlist)) {
+                            setItems(data.watchlist);
+                            try { localStorage.setItem(WL_KEY, JSON.stringify(data.watchlist)); } catch {}
+                        }
+                    }).catch(() => {});
+                }
+            }, [auth.token, auth.backendOnline]);
+
+            useEffect(() => {
+                try { localStorage.setItem(WL_KEY, JSON.stringify(items)); } catch (e) { }
+            }, [items]);
+
+            // Clear watchlist on sign out
+            useEffect(() => {
+                if (!auth.isAuth) {
+                    setItems([]);
+                    try { localStorage.removeItem(WL_KEY); } catch {}
+                }
+            }, [auth.isAuth]);
+
+            // Auto-add pending movie after successful sign in
+            useEffect(() => {
+                if (auth.isAuth && auth.modal && auth.modal.pendingMovie) {
+                    const pm = auth.modal.pendingMovie;
+                    if (auth.clearPendingMovie) auth.clearPendingMovie();
+                    setItems(cur => {
+                        if (cur.some(m => m.id === pm.id)) return cur;
+                        const { similar, ...rest } = pm;
+                        return [...cur, rest];
+                    });
+                    toast.show(`Added "${pm.title}" to your Watchlist!`, "bookmark");
+                    if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
+                        fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${auth.token}`
+                            },
+                            body: JSON.stringify({
+                                id: pm.id,
+                                title: pm.title,
+                                year: pm.year,
+                                rating: pm.rating,
+                                poster: pm.poster,
+                                backdrop: pm.backdrop
+                            })
+                        }).catch(() => {});
+                    }
+                }
+            }, [auth.isAuth, auth.modal && auth.modal.pendingMovie, auth.token, auth.backendOnline, toast]);
+
+            const has = useCallback(id => items.some(m => m.id === id), [items]);
+
+            const toggle = useCallback(async movie => {
+                if (!auth.isAuth) {
+                    toast.show("Please sign in to save movies to your Watchlist", "bookmark");
+                    auth.openAuth("signin", { reason: "watchlist", pendingMovie: movie });
+                    return;
+                }
+                const ex = items.some(m => m.id === movie.id);
+                if (ex) {
+                    setItems(cur => cur.filter(m => m.id !== movie.id));
+                    toast.show("Removed from watchlist", "trash-2");
+                } else {
+                    const { similar, ...rest } = movie;
+                    setItems(cur => [...cur, rest]);
+                    toast.show("Added to watchlist", "bookmark");
+                }
+
+                // If logged in, sync with MongoDB
+                if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
+                    try {
+                        await fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${auth.token}`
+                            },
+                            body: JSON.stringify({
+                                id: movie.id,
+                                title: movie.title,
+                                year: movie.year,
+                                rating: movie.rating,
+                                poster: movie.poster,
+                                backdrop: movie.backdrop
+                            })
+                        });
+                    } catch {}
+                }
+            }, [items, toast, auth]);
+
+            const remove = useCallback(async id => {
+                if (!auth.isAuth) {
+                    toast.show("Please sign in to manage your Watchlist", "bookmark");
+                    auth.openAuth("signin", { reason: "watchlist" });
+                    return;
+                }
+                setItems(cur => cur.filter(m => m.id !== id));
+                toast.show("Removed from watchlist", "trash-2");
+                if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
+                    try {
+                        await fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${auth.token}`
+                            },
+                            body: JSON.stringify({ id })
+                        });
+                    } catch {}
+                }
+            }, [toast, auth]);
+
+            const value = useMemo(() => ({ items, has, toggle, remove }), [items, has, toggle, remove]);
+            return <WLCtx.Provider value={value}>{children}</WLCtx.Provider>;
+        }
+
+        /* ============================= ICON ============================= */
+        const BRAND_ICONS = {
+            Instagram: [
+                ["rect", { width: "20", height: "20", x: "2", y: "2", rx: "5", ry: "5" }],
+                ["path", { d: "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" }],
+                ["line", { x1: "17.5", x2: "17.51", y1: "6.5", y2: "6.5" }]
+            ],
+            Youtube: [
+                ["path", { d: "M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" }],
+                ["polygon", { points: "10 15 15 12 10 9" }]
+            ],
+            Github: [
+                ["path", { d: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" }],
+                ["path", { d: "M9 18c-4.51 2-5-2-7-2" }]
+            ]
+        };
+        function getIconNode(pascal) {
+            if (BRAND_ICONS[pascal]) return BRAND_ICONS[pascal];
+            const L = window.lucide; if (!L) return null;
+            let v = (L.icons && L.icons[pascal]) || L[pascal];
+            if (!v) return null;
+            if (Array.isArray(v)) return v;
+            if (v.iconNode) return v.iconNode;
+            return null;
+        }
+        function Icon({ name, size = 18, className = "", strokeWidth = 2, filled = false }) {
+            const pascal = name.split("-").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join("");
+            const node = getIconNode(pascal);
+            if (!node) return null;
+            const body = node.map(([tag, attrs]) => { const a = Object.entries(attrs || {}).filter(([k]) => k !== "key").map(([k, v]) => `${k}="${String(v).replace(/"/g, "&quot;")}"`).join(" "); return `<${tag} ${a}></${tag}>`; }).join("");
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${filled ? "currentColor" : "none"}" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" class="${className}">${body}</svg>`;
+            return <span className="inline-flex shrink-0" dangerouslySetInnerHTML={{ __html: svg }} />;
+        }
+
+        /* ============================= IMAGERY ============================= */
+        const PALETTES = [["#1c130f", "#3d2417"], ["#0e1a1e", "#16333c"], ["#191121", "#341f4a"], ["#1f1113", "#4a1d24"], ["#0f1a13", "#1c3d2a"], ["#131320", "#26264a"]];
+        function FallbackArt({ title, year, seed, wide }) {
+            const p = PALETTES[Math.abs(seed || 0) % PALETTES.length];
+            return <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(150deg,${p[0]} 0%,${p[1]} 55%,#070808 100%)` }}>
+                <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 28% 18%, #ffffff, transparent 46%)" }} />
+                <span className="absolute font-display font-extrabold text-white/[0.05] select-none leading-none" style={{ fontSize: wide ? 200 : 130 }}>{(title || "C").charAt(0)}</span>
+                <div className="relative text-center px-4">
+                    <div className="mx-auto mb-2.5 w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/50"><Icon name="film" size={15} /></div>
+                    <p className={"font-display font-bold uppercase tracking-wider text-white/80 leading-snug " + (wide ? "text-lg" : "text-[11px]")}>{title}</p>
+                    {year && <p className="text-[10px] tracking-[0.3em] text-white/35 mt-1">{year}</p>}
+                </div>
+            </div>;
+        }
+        function SmartImg({ src, fallbackSrc, title, year, seed, wide, className, imgClass }) {
+            const [stage, setStage] = useState(src ? 0 : (fallbackSrc ? 1 : 2));
+            useEffect(() => { setStage(src ? 0 : (fallbackSrc ? 1 : 2)); }, [src]);
+            const current = stage === 0 ? src : (stage === 1 ? fallbackSrc : null);
+            return <div className={"relative overflow-hidden bg-cine-surface " + (className || "")}>
+                {(!current || stage === 2) ? <FallbackArt title={title} year={year} seed={seed} wide={wide} />
+                    : <div className="absolute inset-0 shimmer bg-cine-elev" />}
+                {current && stage !== 2 && <img key={current} src={current} alt={title || ""}
+                    onError={() => setStage(s => s === 0 ? (fallbackSrc ? 1 : 2) : 2)}
+                    className={"absolute inset-0 w-full h-full object-cover " + (imgClass || "")} />}
+            </div>;
+        }
+
+        /* ============================= SHARED UI ============================= */
+        function Logo({ className }) {
+            return <a href="#/" aria-label="CiNE home" className={"font-display font-extrabold tracking-tight text-xl select-none " + (className || "")}>CiNE<span className="text-cine-red">..</span></a>;
+        }
+
+        document.head.insertAdjacentHTML("beforeend", "<style>@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.1)}}.kenburns{animation:kb 10s ease-out both}</style>");
+
+        const trailerUrl = m => m.trailer
+            ? `https://www.youtube.com/watch?v=${m.trailer}`
+            : `https://www.youtube.com/results?search_query=${encodeURIComponent((m.title || "") + " " + (m.year || "") + " official trailer")}`;
+
+        function Rating({ value, className, starSize = 13 }) {
+            if (value == null || isNaN(value)) return null;
+            return <span className={"inline-flex items-center gap-1 text-sm font-semibold " + (className || "")}>
+                <Icon name="star" size={starSize} filled className="text-cine-red" />
+                <span>{Number(value).toFixed(1)}</span>
+            </span>;
+        }
+
+        function Reveal({ children, delay = 0, className }) {
+            const ref = useRef(null); const [vis, setVis] = useState(false);
+            useEffect(() => {
+                const el = ref.current; if (!el) return;
+                const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); io.disconnect(); } }, { threshold: 0.1 });
+                io.observe(el); return () => io.disconnect();
+            }, []);
+            return <div ref={ref} style={{ transitionDelay: delay + "ms" }}
+                className={(className || "") + " transition-all duration-700 ease-out " + (vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-7")}>{children}</div>;
+        }
+
+        const Skel = ({ className }) => <div className={"shimmer rounded-xl " + (className || "")} />;
+
+        function SectionHead({ title, link }) {
+            return <div className="flex items-end justify-between mb-5">
+                <h2 className="font-display font-bold text-xl sm:text-2xl tracking-tight">{title}</h2>
+                {link && <a href={link} className="group flex items-center gap-1.5 text-xs font-semibold text-cine-muted hover:text-white transition-colors">
+                    View All <Icon name="arrow-right" size={13} className="transition-transform duration-300 group-hover:translate-x-1" /></a>}
+            </div>;
+        }
+
+        function Pill({ active, children, onClick }) {
+            return <button onClick={onClick}
+                className={"rounded-full px-4 py-2 text-xs font-semibold border transition-all duration-300 active:scale-95 " +
+                    (active ? "bg-cine-red border-cine-red text-white shadow-[0_6px_20px_-6px_rgba(229,36,42,0.6)]"
+                        : "border-white/10 text-cine-muted hover:text-white hover:border-white/25 bg-white/[0.02]")}>{children}</button>;
+        }
+
+        /* ============================= MOVIE CARDS ============================= */
+        function PosterCard({ m, fluid }) {
+            const wl = useWatchlist(); const on = wl.has(m.id);
+            return <a href={"#/movie/" + m.id}
+                className={"group relative block snap-start " + (fluid ? "w-full" : "w-[146px] sm:w-[168px] lg:w-[188px] shrink-0")}>
+                <div className="relative aspect-[2/3] rounded-xl overflow-hidden border border-white/[0.06] bg-cine-surface transition-all duration-500 group-hover:-translate-y-1.5 group-hover:border-white/[0.16] group-hover:shadow-[0_20px_50px_-14px_rgba(0,0,0,0.95)]">
+                    <div className="absolute inset-0"><SmartImg src={IMG_POSTER(m.poster)} fallbackSrc={IMG_DIRECT_POSTER(m.poster)} title={m.title} year={m.year} seed={m.id} className="h-full w-full" imgClass="transition-transform duration-700 group-hover:scale-[1.07]" /></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+                    <button aria-label={on ? "Remove from watchlist" : "Add to watchlist"}
+                        onClick={e => { e.preventDefault(); e.stopPropagation(); wl.toggle(m); }}
+                        className={"absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300 active:scale-90 " +
+                            (on ? "bg-cine-red border-cine-red text-white opacity-100"
+                                : "bg-black/55 border-white/15 text-white/85 opacity-0 group-hover:opacity-100 hover:bg-cine-red hover:border-cine-red")}>
+                        <Icon name={on ? "check" : "plus"} size={15} />
+                    </button>
+                    <div className="absolute bottom-0 inset-x-0 p-3">
+                        <p className="font-semibold text-[13px] leading-snug line-clamp-2 drop-shadow">{m.title}</p>
+                        <div className="mt-1.5 flex items-center gap-2 text-[11px] text-white/70">
+                            <Rating value={m.rating} starSize={11} className="text-[11px]" />
+                            {m.year && <span className="text-white/50">{m.year}</span>}
+                        </div>
+                    </div>
+                </div>
+            </a>;
+        }
+
+        function WideCard({ m }) {
+            const wl = useWatchlist(); const on = wl.has(m.id);
+            const g = movieGenres(m)[0];
+            return <a href={"#/movie/" + m.id}
+                className="group relative block rounded-xl overflow-hidden border border-white/[0.06] aspect-[16/10] bg-cine-surface transition-all duration-500 hover:-translate-y-1 hover:border-white/[0.16] hover:shadow-[0_24px_55px_-14px_rgba(0,0,0,0.95)]">
+                <div className="absolute inset-0"><SmartImg src={IMG_BACKDROP(m.backdrop)} fallbackSrc={IMG_DIRECT_BACKDROP(m.backdrop) || PICSUM(m.id)} title={m.title} year={m.year} seed={m.id} wide className="h-full w-full" imgClass="transition-transform duration-700 group-hover:scale-[1.05]" /></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-black/5" />
+                <button aria-label="Toggle watchlist"
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); wl.toggle(m); }}
+                    className={"absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300 active:scale-90 " +
+                        (on ? "bg-cine-red border-cine-red text-white opacity-100" : "bg-black/55 border-white/15 text-white/85 opacity-0 group-hover:opacity-100 hover:bg-cine-red hover:border-cine-red")}>
+                    <Icon name={on ? "check" : "plus"} size={16} />
+                </button>
+                <div className="absolute bottom-0 inset-x-0 p-5">
+                    <h3 className="font-display font-bold text-lg sm:text-xl leading-tight drop-shadow">{m.title}</h3>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-white/70">
+                        <Rating value={m.rating} starSize={12} className="text-xs" />
+                        {m.year && <span>{m.year}</span>}
+                        {g && <span className="text-white/50">{g}</span>}
+                    </div>
+                </div>
+            </a>;
+        }
+
+        /* ============================= AUTH SLIDING CARD (Login.jsx) ============================= */
+        const CardBackground = ({ activeView }) => (
+            <div className={`card-bg ${activeView === "login" ? "login" : ""}`}>
+                <img src="./assets/luffy-login.jpg" alt="Cinematic Hero" className="card-bg-img" />
+                <div className="card-bg-overlay" />
+            </div>
+        );
+
+        const HeroPanel = ({ type, activeView, title, text, buttonText, onToggle }) => (
+            <div className={`hero ${type} ${activeView === type ? "active" : ""}`}>
+                <span className="hero-pill">{type === "register" ? "WELCOME BACK" : "JOIN THE CLUB"}</span>
+                <h2>{title}</h2>
+                <p>{text}</p>
+                <div className="hero-perks">
+                    <div className="hero-perk"><Icon name="check" size={14} className="text-cine-red shrink-0" /> <span>Sync watchlist across devices</span></div>
+                    <div className="hero-perk"><Icon name="check" size={14} className="text-cine-red shrink-0" /> <span>Personalized movie recommendations</span></div>
+                </div>
+                <button type="button" onClick={onToggle} className="hero-btn">
+                    {buttonText}
+                </button>
+            </div>
+        );
+
+        const RegisterForm = ({ activeView, onSuccess, onSwitchToLogin }) => {
+            const { register, verifyOtp, resendOtp, modal } = useAuth();
+            const [name, setName] = useState("");
+            const [email, setEmail] = useState("");
+            const [password, setPassword] = useState("");
+            const [showPass, setShowPass] = useState(false);
+            const [otp, setOtp] = useState("");
+            const [showOtp, setShowOtp] = useState(false);
+            const [loading, setLoading] = useState(false);
+            const [err, setErr] = useState("");
+            const [previewUrl, setPreviewUrl] = useState(null);
+            const [timer, setTimer] = useState(45);
+
+            useEffect(() => {
+                if (modal.tab === "otp" && modal.email) {
+                    setEmail(modal.email);
+                    setShowOtp(true);
+                }
+            }, [modal.tab, modal.email]);
+
+            useEffect(() => {
+                let interval;
+                if (showOtp && timer > 0) {
+                    interval = setInterval(() => setTimer(t => t - 1), 1000);
+                }
+                return () => clearInterval(interval);
+            }, [showOtp, timer]);
+
+            const handleSubmit = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!name.trim() || !email.trim() || !password) {
+                    setErr("All fields are required");
+                    return;
+                }
+                if (password.length < 6) {
+                    setErr("Password must be at least 6 characters");
+                    return;
+                }
+                setLoading(true);
+                const res = await register(name.trim(), email.trim(), password);
+                setLoading(false);
+                if (res.success) {
+                    setShowOtp(true);
+                    setTimer(45);
+                    setPreviewUrl(res.data?.previewUrl || null);
+                } else if (res.error) {
+                    setErr(res.error);
+                }
+            };
+
+            const handleVerify = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!otp.trim() || otp.trim().length < 6) { setErr("Enter 6-digit code"); return; }
+                setLoading(true);
+                const res = await verifyOtp(email, otp.trim());
+                setLoading(false);
+                if (res.success) {
+                    if (onSuccess) onSuccess();
+                } else if (res.error) {
+                    setErr(res.error);
+                }
+            };
+
+            const handleResend = async () => {
+                if (timer > 0) return;
+                setErr("");
+                const res = await resendOtp(email);
+                if (res.success) {
+                    setTimer(45);
+                    if (res.data?.previewUrl) setPreviewUrl(res.data.previewUrl);
+                }
+            };
+
+            return (
+                <div className={`form register ${activeView === "register" ? "active" : ""}`}>
+
+
+                    <h2>{showOtp ? "Verify Email" : "Create Account"}</h2>
+                    <p>{showOtp ? `Verification code sent to ${email}` : "Join CiNE to curate your watchlist & cinema feed"}</p>
+
+                    {err && (
+                        <div className="auth-alert-err">
+                            <Icon name="alert-circle" size={14} className="shrink-0 text-cine-red" />
+                            <span>{err}</span>
+                        </div>
+                    )}
+
+                    {previewUrl && (
+                        <div className="w-full mb-3 px-2 py-1 text-center">
+                            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-cine-red hover:underline font-semibold inline-flex items-center gap-1">
+                                <Icon name="mail" size={12} /> Open Test Email Preview ↗
+                            </a>
+                        </div>
+                    )}
+
+                    {showOtp ? (
+                        <form onSubmit={handleVerify}>
+                            <div className="auth-input-wrapper">
+                                <input
+                                    type="text"
+                                    maxLength={6}
+                                    value={otp}
+                                    onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
+                                    placeholder="000000"
+                                    className="auth-otp-input"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> VERIFYING...</>
+                                ) : (
+                                    <><span>CONFIRM CODE</span> <Icon name="check" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="otp-footer">
+                                {timer > 0 ? (
+                                    <span className="otp-timer">Resend code in {timer}s</span>
+                                ) : (
+                                    <button type="button" onClick={handleResend} className="otp-resend-btn">
+                                        Resend code
+                                    </button>
+                                )}
+                                <button type="button" onClick={() => { setShowOtp(false); setErr(""); }} className="otp-back-btn">
+                                    ← Edit details
+                                </button>
+                            </div>
+                        </form>
+                    ) : (
+                        <form onSubmit={handleSubmit}>
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="user" size={15} /></span>
+                                <input
+                                    type="text"
+                                    placeholder="Full name"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                            </div>
+
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="mail" size={15} /></span>
+                                <input
+                                    type="email"
+                                    placeholder="Email address"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                            </div>
+
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="lock" size={15} /></span>
+                                <input
+                                    type={showPass ? "text" : "password"}
+                                    placeholder="Password (min 6 characters)"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPass(v => !v)}
+                                    className="auth-pass-toggle"
+                                    aria-label="Toggle password visibility">
+                                    <Icon name={showPass ? "eye-off" : "eye"} size={15} />
+                                </button>
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> CREATING ACCOUNT...</>
+                                ) : (
+                                    <><span>SIGN UP</span> <Icon name="arrow-right" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="mobile-switch-link sm:hidden mt-3 text-center">
+                                <span className="text-white/50 text-xs">Already have an account? </span>
+                                <button type="button" onClick={onSwitchToLogin} className="text-cine-red text-xs font-bold underline bg-transparent border-0 p-0 cursor-pointer">
+                                    Log In
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
+            );
+        };
+
+        const LoginForm = ({ activeView, onSuccess, onSwitchToRegister }) => {
+            const { login, verifyOtp, resendOtp, forgotPassword, resetPassword, modal } = useAuth();
+            const [email, setEmail] = useState("");
+            const [password, setPassword] = useState("");
+            const [showPass, setShowPass] = useState(false);
+            const [mode, setMode] = useState("login"); // "login" | "otp" | "forgot" | "reset"
+            const [otp, setOtp] = useState("");
+            const [newPassword, setNewPassword] = useState("");
+            const [showNewPass, setShowNewPass] = useState(false);
+            const [rememberMe, setRememberMe] = useState(true);
+            const [loading, setLoading] = useState(false);
+            const [err, setErr] = useState("");
+            const [previewUrl, setPreviewUrl] = useState(null);
+            const [timer, setTimer] = useState(45);
+
+            useEffect(() => {
+                let interval;
+                if ((mode === "otp" || mode === "reset") && timer > 0) {
+                    interval = setInterval(() => setTimer(t => t - 1), 1000);
+                }
+                return () => clearInterval(interval);
+            }, [mode, timer]);
+
+            const handleSubmit = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!email.trim() || !password) {
+                    setErr("Email and password are required");
+                    return;
+                }
+                setLoading(true);
+                const res = await login(email.trim(), password);
+                setLoading(false);
+                if (res.success) {
+                    if (onSuccess) onSuccess();
+                } else if (res.requireOtp) {
+                    setMode("otp");
+                    setTimer(45);
+                    if (res.email) setEmail(res.email);
+                    setPreviewUrl(res.previewUrl || null);
+                    setErr("Your account is not verified yet. Enter the 6-digit code sent to your email.");
+                } else if (res.error) {
+                    setErr(res.error);
+                }
+            };
+
+            const handleVerifyOtp = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!otp.trim() || otp.trim().length < 6) { setErr("Enter 6-digit verification code"); return; }
+                setLoading(true);
+                const res = await verifyOtp(email, otp.trim());
+                setLoading(false);
+                if (res.success) {
+                    if (onSuccess) onSuccess();
+                } else if (res.error) {
+                    setErr(res.error);
+                }
+            };
+
+            const handleForgot = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!email.trim()) { setErr("Enter your email address"); return; }
+                setLoading(true);
+                const res = await forgotPassword(email.trim());
+                setLoading(false);
+                if (res.success) {
+                    setMode("reset");
+                    setTimer(45);
+                    setPreviewUrl(res.data?.previewUrl || null);
+                } else if (res.error) setErr(res.error);
+            };
+
+            const handleReset = async e => {
+                e.preventDefault();
+                setErr("");
+                if (!otp.trim() || otp.trim().length < 6) { setErr("Enter 6-digit reset code"); return; }
+                if (newPassword.length < 6) { setErr("Password must be at least 6 characters"); return; }
+                setLoading(true);
+                const res = await resetPassword(email.trim(), otp.trim(), newPassword);
+                setLoading(false);
+                if (res.success) {
+                    setMode("login");
+                    setPassword("");
+                } else if (res.error) setErr(res.error);
+            };
+
+            const handleResend = async () => {
+                if (timer > 0) return;
+                setErr("");
+                const res = mode === "otp" ? await resendOtp(email) : await forgotPassword(email);
+                if (res.success) {
+                    setTimer(45);
+                    if (res.data?.previewUrl) setPreviewUrl(res.data.previewUrl);
+                }
+            };
+
+            return (
+                <div className={`form login ${activeView === "login" ? "active" : ""}`}>
+                    {modal.reason === "watchlist" && (
+                        <div className="watchlist-pop-badge">
+                            <div className="w-7 h-7 rounded-full bg-cine-red/20 border border-cine-red/50 flex items-center justify-center text-cine-red shrink-0">
+                                <Icon name="bookmark" size={14} />
+                            </div>
+                            <div className="flex-1 text-left">
+                                <p className="font-bold text-xs text-white leading-tight">Watchlist Sign-In Required</p>
+                                <p className="text-[11px] text-white/70 leading-tight mt-0.5">Please sign in to view and save movies to your personal watchlist.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <h2>{mode === "login" ? "Sign In" : (mode === "otp" ? "Verify Email" : (mode === "forgot" ? "Reset Password" : "New Password"))}</h2>
+                    <p>
+                        {mode === "login" && "Enter your credentials to access your account"}
+                        {mode === "otp" && `Enter the 6-digit code sent to ${email}`}
+                        {mode === "forgot" && "We will send a 6-digit verification code to your email"}
+                        {mode === "reset" && "Enter the verification code and set your new password"}
+                    </p>
+
+                    {err && (
+                        <div className="auth-alert-err">
+                            <Icon name="alert-circle" size={14} className="shrink-0 text-cine-red" />
+                            <span>{err}</span>
+                        </div>
+                    )}
+
+                    {previewUrl && (
+                        <div className="w-full mb-3 px-2 py-1 text-center">
+                            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-cine-red hover:underline font-semibold inline-flex items-center gap-1">
+                                <Icon name="mail" size={12} /> Open Test Email Preview ↗
+                            </a>
+                        </div>
+                    )}
+
+                    {mode === "login" && (
+                        <form onSubmit={handleSubmit}>
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="mail" size={15} /></span>
+                                <input
+                                    type="email"
+                                    placeholder="Email address"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                            </div>
+
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="lock" size={15} /></span>
+                                <input
+                                    type={showPass ? "text" : "password"}
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPass(v => !v)}
+                                    className="auth-pass-toggle"
+                                    aria-label="Toggle password visibility">
+                                    <Icon name={showPass ? "eye-off" : "eye"} size={15} />
+                                </button>
+                            </div>
+
+                            <div className="auth-remember-row">
+                                <label className="auth-checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={e => setRememberMe(e.target.checked)}
+                                        className="auth-checkbox"
+                                    />
+                                    <span>Remember me</span>
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode("forgot"); setErr(""); }}
+                                    className="auth-forgot-link">
+                                    Forgot password?
+                                </button>
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> SIGNING IN...</>
+                                ) : (
+                                    <><span>SIGN IN</span> <Icon name="arrow-right" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="mobile-switch-link sm:hidden mt-3 text-center">
+                                <span className="text-white/50 text-xs">Don't have an account? </span>
+                                <button type="button" onClick={onSwitchToRegister} className="text-cine-red text-xs font-bold underline bg-transparent border-0 p-0 cursor-pointer">
+                                    Sign Up
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {mode === "otp" && (
+                        <form onSubmit={handleVerifyOtp}>
+                            <div className="auth-input-wrapper">
+                                <input
+                                    type="text"
+                                    maxLength={6}
+                                    value={otp}
+                                    onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
+                                    placeholder="000000"
+                                    className="auth-otp-input"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> VERIFYING...</>
+                                ) : (
+                                    <><span>CONFIRM CODE</span> <Icon name="check" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="otp-footer">
+                                {timer > 0 ? (
+                                    <span className="otp-timer">Resend code in {timer}s</span>
+                                ) : (
+                                    <button type="button" onClick={handleResend} className="otp-resend-btn">
+                                        Resend code
+                                    </button>
+                                )}
+                                <button type="button" onClick={() => { setMode("login"); setErr(""); }} className="otp-back-btn">
+                                    ← Back to login
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {mode === "forgot" && (
+                        <form onSubmit={handleForgot}>
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="mail" size={15} /></span>
+                                <input
+                                    type="email"
+                                    placeholder="Registered email address"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> SENDING CODE...</>
+                                ) : (
+                                    <><span>SEND RESET CODE</span> <Icon name="mail" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="mt-3 text-center">
+                                <button type="button" onClick={() => { setMode("login"); setErr(""); }} className="otp-back-btn">
+                                    ← Back to login
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {mode === "reset" && (
+                        <form onSubmit={handleReset}>
+                            <div className="auth-input-wrapper">
+                                <input
+                                    type="text"
+                                    maxLength={6}
+                                    value={otp}
+                                    onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
+                                    placeholder="6-digit reset code"
+                                    className="auth-otp-input"
+                                    required
+                                    autoFocus
+                                />
+                            </div>
+
+                            <div className="auth-input-wrapper">
+                                <span className="auth-input-icon"><Icon name="lock" size={15} /></span>
+                                <input
+                                    type={showNewPass ? "text" : "password"}
+                                    placeholder="New password (min 6 characters)"
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    className="auth-input"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewPass(v => !v)}
+                                    className="auth-pass-toggle"
+                                    aria-label="Toggle password visibility">
+                                    <Icon name={showNewPass ? "eye-off" : "eye"} size={15} />
+                                </button>
+                            </div>
+
+                            <button type="submit" className="auth-btn-primary" disabled={loading}>
+                                {loading ? (
+                                    <><span className="auth-spinner" /> UPDATING PASSWORD...</>
+                                ) : (
+                                    <><span>UPDATE PASSWORD</span> <Icon name="check" size={15} /></>
+                                )}
+                            </button>
+
+                            <div className="mt-3 text-center">
+                                <button type="button" onClick={() => { setMode("login"); setErr(""); }} className="otp-back-btn">
+                                    ← Back to login
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
+            );
+        };
+
+        const Login = ({ onClose }) => {
+            const { modal, backendOnline } = useAuth();
+            const [activeView, setActiveView] = useState(modal.tab === "signup" ? "register" : "login");
+
+            useEffect(() => {
+                if (modal.tab === "signup") {
+                    setActiveView("register");
+                } else if (modal.tab === "signin") {
+                    setActiveView("login");
+                }
+            }, [modal.tab]);
+
+            const toggleView = () => {
+                setActiveView(activeView === "login" ? "register" : "login");
+            };
+
+            return (
+                <div className="card">
+                    {/* Close button */}
+                    {onClose && (
+                        <button onClick={onClose} aria-label="Close" className="auth-close-btn">
+                            <Icon name="x" size={16} />
+                        </button>
+                    )}
+
+                    {/* Backend status indicator */}
+                    <div className="auth-backend-badge" title={backendOnline ? "Server Live" : "Connecting..."}>
+                        <span className={`status-dot ${backendOnline ? "online" : "offline"}`} />
+                    </div>
+
+                    {/* Mobile Tab Switcher */}
+                    <div className="mobile-auth-tabs">
+                        <button
+                            type="button"
+                            onClick={() => setActiveView("login")}
+                            className={`mobile-auth-tab ${activeView === "login" ? "active" : ""}`}>
+                            Sign In
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setActiveView("register")}
+                            className={`mobile-auth-tab ${activeView === "register" ? "active" : ""}`}>
+                            Create Account
+                        </button>
+                    </div>
+
+                    <CardBackground activeView={activeView} />
+                    <HeroPanel
+                        type="register"
+                        activeView={activeView}
+                        title="Welcome Back"
+                        text="Sign in to resume your cinematic journey and view your personal collection"
+                        buttonText="SIGN IN"
+                        onToggle={toggleView}
+                    />
+                    <RegisterForm
+                        activeView={activeView}
+                        onSuccess={onClose}
+                        onSwitchToLogin={() => setActiveView("login")}
+                    />
+                    <HeroPanel
+                        type="login"
+                        activeView={activeView}
+                        title="Hello There"
+                        text="Begin your journey through world cinema with an official CiNE account"
+                        buttonText="CREATE ACCOUNT"
+                        onToggle={toggleView}
+                    />
+                    <LoginForm
+                        activeView={activeView}
+                        onSuccess={onClose}
+                        onSwitchToRegister={() => setActiveView("register")}
+                    />
+                </div>
+            );
+        };
+
+        function AuthModal() {
+            const { modal, closeAuth } = useAuth();
+            const [popupMsg, setPopupMsg] = useState(null);
+
+            useEffect(() => {
+                if (modal.open && modal.reason === "watchlist") {
+                    setPopupMsg("Sign in or create an account to access your Watchlist");
+                    const t = setTimeout(() => setPopupMsg(null), 4500);
+                    return () => clearTimeout(t);
+                } else {
+                    setPopupMsg(null);
+                }
+            }, [modal.open, modal.reason]);
+
+            if (!modal.open) return null;
+            return (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md fade-in"
+                    onClick={e => { if (e.target === e.currentTarget) closeAuth(); }}>
+                    {popupMsg && (
+                        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[130] flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-cine-elev/95 border border-cine-red/50 text-white text-xs font-semibold shadow-2xl shadow-cine-red/30 backdrop-blur-xl fade-in">
+                            <Icon name="bookmark" size={15} className="text-cine-red shrink-0" />
+                            <span>{popupMsg}</span>
+                            <button type="button" onClick={() => setPopupMsg(null)} className="ml-2 text-white/50 hover:text-white bg-transparent border-0 cursor-pointer p-0 inline-flex items-center">
+                                <Icon name="x" size={13} />
+                            </button>
+                        </div>
+                    )}
+                    <Login onClose={closeAuth} />
+                </div>
+            );
+        }
+
+        /* ============================= NAVBAR ============================= */
+        function Navbar({ route }) {
+            const toast = useToast();
+            const auth = useAuth();
+            const wl = useWatchlist();
+            const [scrolled, setScrolled] = useState(false);
+            const [open, setOpen] = useState(false);
+            const [profileOpen, setProfileOpen] = useState(false);
+            const profileRef = useRef(null);
+            const [q, setQ] = useState("");
+            const [results, setResults] = useState(null);
+            const [searching, setSearching] = useState(false);
+            const [drop, setDrop] = useState(false);
+            const boxRef = useRef(null);
+            useEffect(() => {
+                const f = () => setScrolled(window.scrollY > 20); f();
+                window.addEventListener("scroll", f, { passive: true }); return () => window.removeEventListener("scroll", f);
+            }, []);
+            useEffect(() => { setOpen(false); setDrop(false); setProfileOpen(false); }, [route.path, route.query && route.query.q]);
+            useEffect(() => {
+                const f = e => {
+                    if (boxRef.current && !boxRef.current.contains(e.target)) setDrop(false);
+                    if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+                };
+                document.addEventListener("mousedown", f); return () => document.removeEventListener("mousedown", f);
+            }, []);
+            useEffect(() => {
+                if (!q.trim()) { setResults(null); setSearching(false); return; }
+                setSearching(true);
+                const t = setTimeout(async () => {
+                    try { const r = await DataService.explore({ query: q.trim(), genre: "All", sort: "popularity" }); setResults(r.slice(0, 6)); }
+                    catch (e) { setResults([]); }
+                    setSearching(false);
+                }, 350);
+                return () => clearTimeout(t);
+            }, [q]);
+            const submit = e => { e.preventDefault(); if (q.trim()) { window.location.hash = "#/explore?q=" + encodeURIComponent(q.trim()); setDrop(false); setOpen(false); } };
+            const NavLink = ({ to, children }) => {
+                const active = to === "/" ? (route.path === "/" || route.path === "") : route.path.startsWith(to);
+                return <a href={"#" + to} className={"relative px-1 py-2 text-sm font-medium transition-colors duration-300 " + (active ? "text-white" : "text-cine-muted hover:text-white")}>
+                    {children}
+                    <span className={"absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-cine-red transition-all duration-300 " + (active ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")} />
+                </a>;
+            };
+            return <header className={"fixed top-0 inset-x-0 z-50 transition-all duration-500 " + (scrolled || open ? "bg-cine-bg/85 backdrop-blur-xl border-b border-white/[0.06]" : "bg-gradient-to-b from-black/70 to-transparent")}>
+                <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 lg:h-[72px] flex items-center gap-6">
+                    <Logo />
+                    <nav className="hidden md:flex items-center gap-7 ml-4">
+                        <NavLink to="/">Discover</NavLink>
+                        <NavLink to="/explore">Explore</NavLink>
+                        <a href="#/watchlist"
+                            onClick={e => {
+                                if (!auth.isAuth) {
+                                    e.preventDefault();
+                                    toast.show("Please sign in to access your Watchlist", "bookmark");
+                                    auth.openAuth("signin", { reason: "watchlist" });
+                                }
+                            }}
+                            className={"relative px-1 py-2 text-sm font-medium transition-colors duration-300 " + (route.path.startsWith("/watchlist") ? "text-white" : "text-cine-muted hover:text-white")}>
+                            Watchlist
+                            <span className={"absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-cine-red transition-all duration-300 " + (route.path.startsWith("/watchlist") ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")} />
+                        </a>
+                    </nav>
+                    <div className="flex-1" />
+                    <div ref={boxRef} className="relative hidden lg:block w-72">
+                        <form onSubmit={submit}>
+                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cine-muted"><Icon name="search" size={15} /></span>
+                            <input value={q} onChange={e => { setQ(e.target.value); setDrop(true); }} onFocus={() => setDrop(true)}
+                                placeholder="Search movies, shows, people..."
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm placeholder:text-cine-muted/70 outline-none focus:border-cine-red/50 focus:bg-white/[0.07] transition-all" />
+                        </form>
+                        {drop && q.trim() && <div className="absolute right-0 top-12 w-[22rem] rounded-xl border border-white/10 bg-cine-elev/95 backdrop-blur-xl shadow-2xl shadow-black/70 overflow-hidden fade-in">
+                            {searching && <div className="p-3 space-y-2">{[0, 1, 2].map(i => <Skel key={i} className="h-12" />)}</div>}
+                            {!searching && results && results.length === 0 && <p className="p-4 text-sm text-cine-muted">No results for “{q.trim()}”.</p>}
+                            {!searching && results && results.map(m =>
+                                <a key={m.id} href={"#/movie/" + m.id} onClick={() => setDrop(false)} className="flex items-center gap-3 px-3 py-2.5 hover:bg-white/[0.05] transition-colors">
+                                    <div className="w-9 h-[52px] rounded-md overflow-hidden shrink-0 border border-white/10 relative">
+                                        <SmartImg src={IMG_POSTER(m.poster)} fallbackSrc={IMG_DIRECT_POSTER(m.poster)} title={m.title} seed={m.id} className="h-full w-full" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-sm font-semibold truncate">{m.title}</p>
+                                        <p className="text-xs text-cine-muted flex items-center gap-2 mt-0.5">{m.year || "—"} <Rating value={m.rating} starSize={10} className="text-[11px]" /></p>
+                                    </div>
+                                </a>)}
+                            {!searching && results && results.length > 0 &&
+                                <button onClick={submit} className="w-full px-4 py-3 text-xs font-semibold text-cine-muted hover:text-white hover:bg-white/[0.05] transition-colors text-left border-t border-white/[0.06]">
+                                    See all results for “{q.trim()}” →</button>}
+                        </div>}
+                    </div>
+                    <button aria-label="Notifications" onClick={() => toast.show("You're all caught up", "bell")}
+                        className="hidden sm:flex w-10 h-10 rounded-full border border-white/10 items-center justify-center text-cine-muted hover:text-white hover:border-white/30 transition-all active:scale-90">
+                        <Icon name="bell" size={16} />
+                    </button>
+                    {auth.isAuth ? (
+                        <div ref={profileRef} className="relative">
+                            <button aria-label="Account menu" onClick={() => setProfileOpen(v => !v)}
+                                className="w-9 h-9 rounded-full bg-gradient-to-br from-cine-red to-[#7a1a6b] flex items-center justify-center text-white ring-2 ring-white/10 hover:ring-cine-red/60 transition-all font-display font-bold text-xs active:scale-95">
+                                {auth.user.name.charAt(0).toUpperCase()}
+                            </button>
+                            {profileOpen && (
+                                <div className="absolute right-0 top-12 w-64 rounded-2xl border border-white/10 bg-cine-elev/98 backdrop-blur-xl shadow-2xl shadow-black/80 p-3 fade-in z-50">
+                                    <div className="px-3 py-2.5 border-b border-white/[0.08] mb-2">
+                                        <p className="font-semibold text-sm truncate text-white">{auth.user.name}</p>
+                                        <p className="text-xs text-cine-muted truncate">{auth.user.email}</p>
+                                        
+                                    </div>
+                                    <a href="#/watchlist" onClick={() => setProfileOpen(false)}
+                                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-cine-muted hover:text-white hover:bg-white/[0.05] transition-all">
+                                        <span className="flex items-center gap-2.5"><Icon name="bookmark" size={14} className="text-cine-red" /> My Watchlist</span>
+                                        <span className="text-[11px] text-white/50">{wl.items.length}</span>
+                                    </a>
+                                    <button onClick={() => { auth.logout(); setProfileOpen(false); }}
+                                        className="w-full mt-1 flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-cine-red hover:bg-cine-red/10 transition-all text-left">
+                                        <Icon name="log-out" size={14} /> Sign Out
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <button onClick={() => auth.openAuth("signin")}
+                            className="rounded-full bg-cine-red hover:bg-[#f3353b] px-3.5 sm:px-4 py-2 text-xs font-bold text-white transition-all shadow-[0_4px_15px_-4px_rgba(229,36,42,0.6)] active:scale-95 flex items-center gap-1.5">
+                            <Icon name="user" size={14} />
+                            <span>Sign In</span>
+                        </button>
+                    )}
+                    <button aria-label="Menu" onClick={() => setOpen(v => !v)}
+                        className="md:hidden w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/85 hover:border-white/30 transition-all active:scale-90">
+                        <Icon name={open ? "x" : "menu"} size={18} />
+                    </button>
+                </div>
+                {open && <div className="md:hidden border-t border-white/[0.06] bg-cine-bg/95 backdrop-blur-xl fade-in">
+                    <div className="px-5 py-5 space-y-1">
+                        <form onSubmit={submit} className="relative mb-4">
+                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cine-muted"><Icon name="search" size={15} /></span>
+                            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search movies..."
+                                className="w-full bg-white/[0.05] border border-white/10 rounded-full pl-10 pr-4 py-3 text-sm placeholder:text-cine-muted/70 outline-none focus:border-cine-red/50" />
+                        </form>
+                        {[["/", "Discover"], ["/explore", "Explore"], ["/watchlist", "Watchlist"]].map(([to, label]) => {
+                            const active = to === "/" ? (route.path === "/" || route.path === "") : route.path.startsWith(to);
+                            return <a key={to} href={"#" + to}
+                                onClick={e => {
+                                    if (to === "/watchlist" && !auth.isAuth) {
+                                        e.preventDefault();
+                                        setOpen(false);
+                                        toast.show("Please sign in to access your Watchlist", "bookmark");
+                                        auth.openAuth("signin", { reason: "watchlist" });
+                                    }
+                                }}
+                                className={"flex items-center justify-between rounded-lg px-4 py-3.5 text-sm font-semibold transition-colors " + (active ? "bg-cine-red/10 text-white border border-cine-red/30" : "text-cine-muted hover:text-white hover:bg-white/[0.04] border border-transparent")}>
+                                {label}{active && <span className="w-1.5 h-1.5 rounded-full bg-cine-red" />}
+                            </a>;
+                        })}
+                        {auth.isAuth ? (
+                            <div className="pt-2 pb-1 border-t border-white/[0.06] mt-2">
+                                <div className="px-4 py-2">
+                                    <p className="text-sm font-semibold text-white">{auth.user.name}</p>
+                                    <p className="text-xs text-cine-muted">{auth.user.email}</p>
+                                </div>
+                                <button onClick={() => { auth.logout(); setOpen(false); }}
+                                    className="w-full flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-cine-red hover:bg-cine-red/10 transition-colors">
+                                    <Icon name="log-out" size={16} /> Sign Out
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="pt-2 border-t border-white/[0.06] mt-2">
+                                <button onClick={() => { auth.openAuth("signin"); setOpen(false); }}
+                                    className="w-full py-3 rounded-xl bg-cine-red text-white text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-cine-red/30">
+                                    <Icon name="user" size={16} /> Sign In / Register
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>}
+            </header>;
+        }
+
+        /* ============================= HERO ============================= */
+        function Hero() {
+            const wl = useWatchlist();
+            const [items, setItems] = useState(null);
+            const [i, setI] = useState(0);
+            const [paused, setPaused] = useState(false);
+            useEffect(() => {
+                let on = true;
+                DataService.featured().then(r => {
+                    if (on && r && r.length) setItems(r);
+                    else if (on) SampleService.featured().then(setItems);
+                }).catch(() => {
+                    if (on) SampleService.featured().then(setItems);
+                });
+                return () => { on = false };
+            }, []);
+            useEffect(() => {
+                if (!items || paused || items.length < 2) return;
+                const t = setInterval(() => setI(v => (v + 1) % items.length), 8000); return () => clearInterval(t);
+            }, [items, paused]);
+            if (!items) return <section className="relative h-[600px] lg:h-[700px]"><div className="absolute inset-0 shimmer" /></section>;
+            const m = items[i]; const on = wl.has(m.id);
+            const go = d => setI(v => (v + d + items.length) % items.length);
+            const titleText = m.displayTitle || m.title || "";
+            const titleSize = titleText.length > 30
+                ? "text-3xl sm:text-4xl lg:text-5xl"
+                : titleText.length > 18
+                    ? "text-4xl sm:text-5xl lg:text-6xl"
+                    : "text-5xl sm:text-6xl lg:text-7xl";
+            return <section className="relative min-h-[640px] sm:min-h-[660px] lg:min-h-[700px] flex items-center overflow-hidden"
+                onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+                {items.map((it, idx) =>
+                    <div key={it.id} className={"absolute inset-0 transition-opacity duration-[1100ms] ease-out " + (idx === i ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                        <div className="absolute inset-0"><SmartImg src={IMG_BACKDROP(it.backdrop)} fallbackSrc={IMG_DIRECT_BACKDROP(it.backdrop) || PICSUM(it.id)} title={it.title} seed={it.id} wide className="h-full w-full" imgClass={idx === i ? "kenburns" : ""} /></div>
+                    </div>)}
+                <div className="absolute inset-0 bg-gradient-to-r from-cine-bg via-cine-bg/55 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-cine-bg via-transparent to-black/40" />
+                <div className="relative h-full max-w-7xl mx-auto px-5 lg:px-8 flex items-center w-full">
+                    <div key={m.id} className="max-w-3xl pt-14 pb-8">
+                        <p className="anim-hero text-[11px] font-bold tracking-[0.35em] text-cine-red mb-3.5">{m.label || "NOW TRENDING"}</p>
+                        <a href={"#/movie/" + m.id} className="block group">
+                            <h1 className={"anim-hero-d1 font-display font-extrabold uppercase leading-[1.02] tracking-tight drop-shadow-2xl group-hover:text-white/95 transition-colors line-clamp-3 " + titleSize}>
+                                {titleText}
+                            </h1>
+                            {m.tagline && <p className="anim-hero-d1 font-serif italic text-cine-red text-2xl sm:text-3xl mt-1 drop-shadow">{m.tagline}</p>}
+                        </a>
+                        <div className="anim-hero-d2 mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/80">
+                            <Rating value={m.rating} className="text-sm" />
+                            {m.year && <span>{m.year}</span>}
+                            {m.runtime && <span>{fmtRuntime(m.runtime)}</span>}
+                            {movieGenres(m).length > 0 && <span className="text-white/60">{movieGenres(m).slice(0, 2).join(" · ")}</span>}
+                        </div>
+                        {m.overview && <p className="anim-hero-d2 mt-3.5 text-sm sm:text-[15px] leading-relaxed text-white/70 max-w-xl line-clamp-2 sm:line-clamp-3">{m.overview}</p>}
+                        <div className="anim-hero-d3 mt-6 flex flex-wrap items-center gap-3">
+                            <a href={trailerUrl(m)} target="_blank" rel="noopener"
+                                className="inline-flex items-center gap-2.5 rounded-lg bg-cine-red px-6 py-3.5 text-sm font-bold text-white shadow-[0_12px_35px_-8px_rgba(229,36,42,0.65)] hover:bg-[#f3353b] hover:shadow-[0_16px_40px_-8px_rgba(229,36,42,0.8)] transition-all duration-300 active:scale-95">
+                                <Icon name="play" size={16} filled /> Watch Trailer
+                            </a>
+                            <button onClick={() => wl.toggle(m)}
+                                className={"inline-flex items-center gap-2.5 rounded-lg px-6 py-3.5 text-sm font-semibold border backdrop-blur-md transition-all duration-300 active:scale-95 " +
+                                    (on ? "border-cine-red/60 bg-cine-red/10 text-white" : "border-white/20 bg-white/[0.06] text-white hover:border-white/45 hover:bg-white/[0.1]")}>
+                                <Icon name={on ? "check" : "plus"} size={16} /> {on ? "In Watchlist" : "Add to Watchlist"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {items.length > 1 && <React.Fragment>
+                    <button aria-label="Previous" onClick={() => go(-1)}
+                        className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-white/15 bg-black/35 backdrop-blur-md flex items-center justify-center text-white/80 hover:bg-cine-red hover:border-cine-red hover:text-white transition-all duration-300 active:scale-90">
+                        <Icon name="chevron-left" size={20} />
+                    </button>
+                    <button aria-label="Next" onClick={() => go(1)}
+                        className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-white/15 bg-black/35 backdrop-blur-md flex items-center justify-center text-white/80 hover:bg-cine-red hover:border-cine-red hover:text-white transition-all duration-300 active:scale-90">
+                        <Icon name="chevron-right" size={20} />
+                    </button>
+                    <div className="absolute bottom-7 left-5 lg:left-8 z-10 flex items-center gap-1.5 max-w-7xl">
+                        {items.map((_, idx) =>
+                            <button key={idx} aria-label={"Slide " + (idx + 1)} onClick={() => setI(idx)}
+                                className={"h-1.5 rounded-full transition-all duration-500 " + (idx === i ? "w-6 bg-cine-red" : "w-1.5 bg-white/30 hover:bg-white/60")} />)}
+                    </div>
+                </React.Fragment>}
+            </section>;
+        }
+
+        /* ============================= DISCOVER (HOME) ============================= */
+        function HomePage() {
+            const [trending, setTrending] = useState(null);
+            const [popular, setPopular] = useState(null);
+            const [top, setTop] = useState(null);
+            const [genre, setGenre] = useState("All");
+            useEffect(() => {
+                DataService.trending().then(setTrending).catch(() => SampleService.trending().then(setTrending));
+                DataService.topRated().then(setTop).catch(() => SampleService.topRated().then(setTop));
+            }, []);
+            useEffect(() => {
+                setPopular(null);
+                DataService.popular(genre).then(setPopular).catch(() => SampleService.popular(genre).then(setPopular));
+            }, [genre]);
+            return <React.Fragment>
+                <Hero />
+                <div className="max-w-7xl mx-auto px-5 lg:px-8">
+                    <Reveal className="mt-14">
+                        <SectionHead title="Trending Now" link="#/explore" />
+                        {trending === null
+                            ? <div className="flex gap-4 overflow-hidden">{Array.from({ length: 7 }).map((_, i) => <Skel key={i} className="w-[146px] sm:w-[168px] lg:w-[188px] aspect-[2/3] shrink-0" />)}</div>
+                            : <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-2 -mx-5 px-5 lg:mx-0 lg:px-0">
+                                {trending.map(m => <PosterCard key={m.id} m={m} />)}
+                            </div>}
+                    </Reveal>
+                    <Reveal className="mt-16">
+                        <div className="flex flex-wrap items-end justify-between gap-4 mb-5">
+                            <h2 className="font-display font-bold text-xl sm:text-2xl tracking-tight">Popular Movies</h2>
+                            <a href="#/explore" className="group flex items-center gap-1.5 text-xs font-semibold text-cine-muted hover:text-white transition-colors">
+                                View All <Icon name="arrow-right" size={13} className="transition-transform duration-300 group-hover:translate-x-1" /></a>
+                        </div>
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 lg:mx-0 lg:px-0 mb-6">
+                            {HOME_PILLS.map(g => <div key={g} className="shrink-0"><Pill active={genre === g} onClick={() => setGenre(g)}>{g}</Pill></div>)}
+                        </div>
+                        {popular === null
+                            ? <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">{Array.from({ length: 12 }).map((_, i) => <Skel key={i} className="aspect-[2/3]" />)}</div>
+                            : popular.length === 0
+                                ? <EmptyState title="Nothing here yet" text="No popular titles matched this genre right now." />
+                                : <div key={genre} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 fade-in">
+                                    {popular.map(m => <PosterCard key={m.id} m={m} fluid />)}
+                                </div>}
+                    </Reveal>
+                    <Reveal className="mt-16">
+                        <SectionHead title="Top Rated" link="#/explore?sort=rating" />
+                        {top === null
+                            ? <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">{Array.from({ length: 3 }).map((_, i) => <Skel key={i} className="aspect-[16/10]" />)}</div>
+                            : <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+                                {top.map((m, idx) => <Reveal key={m.id} delay={idx * 70}><WideCard m={m} /></Reveal>)}
+                            </div>}
+                    </Reveal>
+                </div>
+            </React.Fragment>;
+        }
+
+        function EmptyState({ icon, title, text, children }) {
+            return <div className="flex flex-col items-center justify-center text-center py-20 px-6">
+                <div className="w-16 h-16 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center text-cine-muted mb-5">
+                    <Icon name={icon || "film"} size={24} />
+                </div>
+                <h3 className="font-display font-bold text-lg">{title}</h3>
+                <p className="text-sm text-cine-muted mt-2 max-w-sm leading-relaxed">{text}</p>
+                {children && <div className="mt-6 flex flex-wrap justify-center gap-3">{children}</div>}
+            </div>;
+        }
+
+        /* ============================= EXPLORE ============================= */
+        function ExplorePage({ route }) {
+            const [q, setQ] = useState(route.query.q || "");
+            const [debQ, setDebQ] = useState(route.query.q || "");
+            const [genre, setGenre] = useState("All");
+            const [sort, setSort] = useState(route.query.sort || "popularity");
+            const [list, setList] = useState(null);
+            const [count, setCount] = useState(12);
+            useEffect(() => { setQ(route.query.q || ""); setDebQ(route.query.q || ""); }, [route.query.q]);
+            useEffect(() => { if (route.query.sort) setSort(route.query.sort); }, [route.query.sort]);
+            useEffect(() => { const t = setTimeout(() => setDebQ(q.trim()), 400); return () => clearTimeout(t); }, [q]);
+            useEffect(() => {
+                setList(null); setCount(12);
+                DataService.explore({ query: debQ, genre, sort }).then(setList).catch(() => SampleService.explore({ query: debQ, genre, sort }).then(setList));
+            }, [debQ, genre, sort]);
+            const shown = list ? list.slice(0, count) : [];
+            return <div className="max-w-7xl mx-auto px-5 lg:px-8 pt-28 lg:pt-32">
+                <p className="text-[11px] font-bold tracking-[0.35em] text-cine-red mb-3">BROWSE THE CATALOGUE</p>
+                <h1 className="font-display font-extrabold tracking-tight text-4xl sm:text-5xl">Explore Movies</h1>
+                <p className="text-cine-muted text-sm mt-3 max-w-lg">Search thousands of titles, filter by genre and sort by what matters to you.</p>
+                <div className="mt-8 flex flex-col lg:flex-row lg:items-center gap-4">
+                    <div className="relative flex-1 max-w-xl">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cine-muted"><Icon name="search" size={16} /></span>
+                        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search by title or keyword..."
+                            className="w-full bg-white/[0.05] border border-white/10 rounded-full pl-11 pr-11 py-3.5 text-sm placeholder:text-cine-muted/70 outline-none focus:border-cine-red/50 focus:bg-white/[0.07] transition-all" />
+                        {q && <button aria-label="Clear" onClick={() => setQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center text-cine-muted hover:text-white hover:bg-white/10 transition-all"><Icon name="x" size={14} /></button>}
+                    </div>
+                    <div className="relative shrink-0">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cine-muted pointer-events-none"><Icon name="sliders-horizontal" size={14} /></span>
+                        <select value={sort} onChange={e => setSort(e.target.value)} aria-label="Sort by"
+                            className="appearance-none w-full lg:w-auto bg-cine-surface border border-white/10 rounded-full pl-10 pr-10 py-3.5 text-sm font-medium outline-none cursor-pointer focus:border-cine-red/50 transition-all">
+                            <option value="popularity" className="bg-cine-surface">Sort: Popularity</option>
+                            <option value="rating" className="bg-cine-surface">Sort: Rating</option>
+                            <option value="date" className="bg-cine-surface">Sort: Release Date</option>
+                        </select>
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-cine-muted pointer-events-none"><Icon name="chevron-down" size={14} /></span>
+                    </div>
+                </div>
+                <div className="mt-5 flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5 lg:mx-0 lg:px-0">
+                    {EXPLORE_GENRES.map(g => <div key={g} className="shrink-0"><Pill active={genre === g} onClick={() => setGenre(g)}>{g}</Pill></div>)}
+                </div>
+                <div className="mt-6 min-h-[300px]">
+                    {list === null
+                        ? <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">{Array.from({ length: 12 }).map((_, i) => <Skel key={i} className="aspect-[2/3]" />)}</div>
+                        : list.length === 0
+                            ? <EmptyState icon="search" title="No movies found" text={debQ ? `Nothing matched “${debQ}”. Try a different title or clear your filters.` : "No titles match the selected filters."}>
+                                <button onClick={() => { setQ(""); setGenre("All"); setSort("popularity"); }}
+                                    className="rounded-full bg-cine-red px-6 py-3 text-sm font-bold hover:bg-[#f3353b] transition-all active:scale-95">Clear Filters</button>
+                            </EmptyState>
+                            : <React.Fragment>
+                                <p className="text-xs text-cine-muted mb-4">Showing <span className="text-white font-semibold">{shown.length}</span> of <span className="text-white font-semibold">{list.length}</span> titles{debQ && <React.Fragment> for “<span className="text-white">{debQ}</span>”</React.Fragment>}</p>
+                                <div key={debQ + genre + sort} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 fade-in">
+                                    {shown.map(m => <PosterCard key={m.id} m={m} fluid />)}
+                                </div>
+                                {count < list.length && <div className="flex justify-center mt-10">
+                                    <button onClick={() => setCount(c => c + 12)}
+                                        className="rounded-full border border-white/15 bg-white/[0.04] px-8 py-3.5 text-sm font-semibold hover:border-cine-red/60 hover:bg-cine-red/10 transition-all duration-300 active:scale-95">
+                                        Load More</button>
+                                </div>}
+                            </React.Fragment>}
+                </div>
+            </div>;
+        }
+
+        /* ============================= MOVIE DETAILS ============================= */
+        function DetailsPage({ route }) {
+            const id = +route.path.split("/")[2];
+            const wl = useWatchlist();
+            const [m, setM] = useState(null);
+            const [err, setErr] = useState(false);
+            useEffect(() => {
+                setM(null); setErr(false);
+                DataService.details(id).then(setM).catch(() => setErr(true));
+            }, [id]);
+            const goBack = () => { if (window.history.length > 1) window.history.back(); else window.location.hash = "#/"; };
+            if (err) return <div className="pt-32"><EmptyState icon="triangle-alert" title="Couldn't load this movie"
+                text="Something went wrong while fetching the details. Please try again.">
+                <button onClick={goBack} className="rounded-full bg-cine-red px-6 py-3 text-sm font-bold hover:bg-[#f3353b] transition-all active:scale-95">Go Back</button>
+            </EmptyState></div>;
+            if (!m) return <div className="pt-16">
+                <Skel className="h-[420px] rounded-none" />
+                <div className="max-w-7xl mx-auto px-5 lg:px-8 -mt-32 relative flex flex-col md:flex-row items-start gap-8">
+                    <Skel className="w-44 md:w-56 aspect-[2/3] shrink-0 self-start" />
+                    <div className="flex-1 space-y-4 pt-4 md:pt-24"><Skel className="h-10 w-2/3" /><Skel className="h-4 w-1/3" /><Skel className="h-24 w-full" /></div>
+                </div>
+            </div>;
+            const on = wl.has(m.id);
+            const gs = movieGenres(m);
+            return <div className="fade-in">
+                <div className="relative h-[400px] sm:h-[460px] overflow-hidden">
+                    <div className="absolute inset-0"><SmartImg src={IMG_BACKDROP(m.backdrop)} fallbackSrc={IMG_DIRECT_BACKDROP(m.backdrop) || PICSUM(m.id)} title={m.title} seed={m.id} wide className="h-full w-full" imgClass="kenburns" /></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-cine-bg via-cine-bg/40 to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-cine-bg/80 via-transparent to-transparent" />
+                    <button onClick={goBack}
+                        className="absolute top-24 left-5 lg:left-8 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 backdrop-blur-md px-5 py-2.5 text-sm font-semibold text-white/85 hover:bg-cine-red hover:border-cine-red hover:text-white transition-all duration-300 active:scale-95">
+                        <Icon name="arrow-left" size={15} /> Back
+                    </button>
+                </div>
+                <div className="max-w-7xl mx-auto px-5 lg:px-8">
+                    <div className="relative -mt-36 sm:-mt-44 flex flex-col md:flex-row items-start gap-8">
+                        <div className="w-40 sm:w-48 md:w-60 shrink-0 self-start rounded-xl overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)]">
+                            <div className="aspect-[2/3] relative"><SmartImg src={IMG_POSTER(m.poster)} fallbackSrc={IMG_DIRECT_POSTER(m.poster)} title={m.title} year={m.year} seed={m.id} className="h-full w-full" /></div>
+                        </div>
+                        <div className="flex-1 md:pt-40 min-w-0">
+                            {gs.length > 0 && <div className="flex flex-wrap gap-2 mb-3">
+                                {gs.map(g => <a key={g} href="#/explore" className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold text-cine-muted hover:text-white hover:border-cine-red/50 transition-all">{g}</a>)}
+                            </div>}
+                            <h1 className="font-display font-extrabold tracking-tight text-3xl sm:text-4xl lg:text-5xl leading-tight">{m.title}</h1>
+                            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/80">
+                                <Rating value={m.rating} className="text-base" starSize={15} />
+                                {m.year && <span className="flex items-center gap-1.5"><Icon name="calendar" size={14} className="text-cine-muted" />{m.year}</span>}
+                                {m.runtime && <span className="flex items-center gap-1.5"><Icon name="clock" size={14} className="text-cine-muted" />{fmtRuntime(m.runtime)}</span>}
+                                {m.director && <span className="text-white/60">Dir. <span className="text-white font-medium">{m.director}</span></span>}
+                            </div>
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                <a href={trailerUrl(m)} target="_blank" rel="noopener"
+                                    className="inline-flex items-center gap-2.5 rounded-lg bg-cine-red px-6 py-3.5 text-sm font-bold shadow-[0_12px_35px_-8px_rgba(229,36,42,0.65)] hover:bg-[#f3353b] transition-all duration-300 active:scale-95">
+                                    <Icon name="play" size={16} filled /> Watch Trailer
+                                </a>
+                                <button onClick={() => wl.toggle(m)}
+                                    className={"inline-flex items-center gap-2.5 rounded-lg px-6 py-3.5 text-sm font-semibold border transition-all duration-300 active:scale-95 " +
+                                        (on ? "border-cine-red/60 bg-cine-red/10 text-white" : "border-white/20 bg-white/[0.05] hover:border-white/45 hover:bg-white/[0.1]")}>
+                                    <Icon name={on ? "check" : "plus"} size={16} /> {on ? "In Watchlist" : "Add to Watchlist"}
+                                </button>
+                            </div>
+                            {m.overview && <div className="mt-8 max-w-3xl">
+                                <h2 className="text-xs font-bold tracking-[0.25em] text-cine-muted mb-3">SYNOPSIS</h2>
+                                <p className="text-[15px] leading-relaxed text-white/75">{m.overview}</p>
+                            </div>}
+                            {m.cast && m.cast.length > 0 && <div className="mt-8">
+                                <h2 className="text-xs font-bold tracking-[0.25em] text-cine-muted mb-3">TOP CAST</h2>
+                                <div className="flex flex-wrap gap-2">
+                                    {m.cast.map((p, idx) => <span key={idx} className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs">
+                                        <span className="font-semibold text-white">{p.name}</span>
+                                        {p.character && <span className="text-cine-muted"> · {p.character}</span>}
+                                    </span>)}
+                                </div>
+                            </div>}
+                        </div>
+                    </div>
+                    {m.similar && m.similar.length > 0 && <Reveal className="mt-16">
+                        <SectionHead title="More Like This" />
+                        <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-2 -mx-5 px-5 lg:mx-0 lg:px-0">
+                            {m.similar.map(s => <PosterCard key={s.id} m={s} />)}
+                        </div>
+                    </Reveal>}
+                </div>
+            </div>;
+        }
+
+        /* ============================= WATCHLIST ============================= */
+        function WatchlistPage() {
+            const auth = useAuth();
+            const wl = useWatchlist();
+            const toast = useToast();
+
+            useEffect(() => {
+                if (!auth.isAuth) {
+                    toast.show("Please sign in to access your Watchlist", "bookmark");
+                    auth.openAuth("signin", { reason: "watchlist" });
+                }
+            }, [auth.isAuth]);
+
+            if (!auth.isAuth) {
+                return (
+                    <div className="max-w-7xl mx-auto px-5 lg:px-8 pt-28 lg:pt-36 pb-20 min-h-[65vh] flex items-center justify-center">
+                        <div className="w-full max-w-lg p-8 sm:p-10 rounded-3xl bg-cine-elev/95 border border-white/10 backdrop-blur-2xl shadow-2xl shadow-black/80 text-center fade-in">
+                            <div className="w-16 h-16 rounded-2xl bg-cine-red/15 border border-cine-red/35 flex items-center justify-center text-cine-red mx-auto mb-5 shadow-[0_0_30px_rgba(229,36,42,0.3)]">
+                                <Icon name="lock" size={28} />
+                            </div>
+                            <span className="inline-block px-3 py-1 rounded-full bg-cine-red/10 border border-cine-red/30 text-[11px] font-bold tracking-wider text-cine-red uppercase mb-3">
+                                Sign In Required
+                            </span>
+                            <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Your Watchlist is Locked</h2>
+                            <p className="text-cine-muted text-sm mt-3 leading-relaxed">
+                                Curate your favorite movies, track what you want to watch next, and synchronize your collection across all devices with a free CiNE account.
+                            </p>
+                            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
+                                <button onClick={() => auth.openAuth("signin", { reason: "watchlist" })}
+                                    className="rounded-full bg-cine-red hover:bg-[#f3353b] px-6 py-3.5 text-xs font-bold text-white tracking-wider uppercase transition-all shadow-[0_10px_25px_-5px_rgba(229,36,42,0.6)] active:scale-95 flex items-center justify-center gap-2">
+                                    <Icon name="user" size={15} /> Sign In / Register
+                                </button>
+                                <a href="#/"
+                                    className="rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/30 px-6 py-3.5 text-xs font-semibold text-white/80 tracking-wider uppercase transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    <Icon name="compass" size={15} /> Discover Movies
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return <div className="max-w-7xl mx-auto px-5 lg:px-8 pt-28 lg:pt-32 min-h-[60vh]">
+                <p className="text-[11px] font-bold tracking-[0.35em] text-cine-red mb-3">YOUR COLLECTION</p>
+                <div className="flex flex-wrap items-end gap-4">
+                    <h1 className="font-display font-extrabold tracking-tight text-4xl sm:text-5xl">My Watchlist</h1>
+                    {wl.items.length > 0 && <span className="mb-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-cine-muted">
+                        {wl.items.length} {wl.items.length === 1 ? "title" : "titles"}</span>}
+                </div>
+                <p className="text-cine-muted text-sm mt-3 max-w-lg">Everything you've saved to watch later — synchronized with your CiNE account.</p>
+                <div className="mt-10">
+                    {wl.items.length === 0
+                        ? <EmptyState icon="popcorn" title="Your watchlist is empty"
+                            text="Browse trending and popular titles, then tap the + button on any movie to save it here for later.">
+                            <a href="#/" className="rounded-full bg-cine-red px-6 py-3 text-sm font-bold hover:bg-[#f3353b] transition-all active:scale-95 inline-flex items-center gap-2"><Icon name="compass" size={15} /> Discover Movies</a>
+                            <a href="#/explore" className="rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-sm font-semibold hover:border-white/40 transition-all active:scale-95">Explore Catalogue</a>
+                        </EmptyState>
+                        : <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 fade-in">
+                            {wl.items.map(m =>
+                                <div key={m.id} className="relative group/wl">
+                                    <PosterCard m={m} fluid />
+                                    <button aria-label={"Remove " + m.title} onClick={() => wl.remove(m.id)}
+                                        className="absolute top-2.5 left-2.5 z-10 w-8 h-8 rounded-full bg-black/60 border border-white/15 backdrop-blur-md flex items-center justify-center text-white/80 opacity-0 group-hover/wl:opacity-100 hover:bg-cine-red hover:border-cine-red transition-all duration-300 active:scale-90">
+                                        <Icon name="trash-2" size={14} />
+                                    </button>
+                                </div>)}
+                        </div>}
+                </div>
+            </div>;
+        }
+
+        /* ============================= FOOTER ============================= */
+        function Footer() {
+            const social = [["instagram", "https://instagram.com"], ["youtube", "https://youtube.com"], ["github", "https://github.com"]];
+            return <footer className="mt-24 border-t border-white/[0.06]">
+                <div className="max-w-7xl mx-auto px-5 lg:px-8 py-12 flex flex-col md:flex-row md:items-center gap-10 justify-between">
+                    <div>
+                        <Logo />
+                        <p className="text-sm text-cine-muted mt-3">Discover. Explore. Watch. Repeat.</p>
+                    </div>
+                    <nav className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+                        <a href="#/" className="text-cine-muted hover:text-white transition-colors">About</a>
+                        <a href="https://www.themoviedb.org" target="_blank" rel="noopener" className="text-cine-muted hover:text-white transition-colors">API Attribution</a>
+                        <a href="mailto:hello@cine.example" className="text-cine-muted hover:text-white transition-colors">Contact</a>
+                    </nav>
+                    <div className="flex gap-3">
+                        {social.map(([icon, url]) =>
+                            <a key={icon} href={url} target="_blank" rel="noopener" aria-label={icon}
+                                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-cine-muted hover:text-white hover:border-cine-red hover:bg-cine-red/10 transition-all duration-300 active:scale-90">
+                                <Icon name={icon} size={16} />
+                            </a>)}
+                    </div>
+                </div>
+                <div className="border-t border-white/[0.04]">
+                    <div className="max-w-7xl mx-auto px-5 lg:px-8 py-5 flex flex-col sm:flex-row gap-2 items-center justify-between text-xs text-cine-muted/70">
+                        <span>© {new Date().getFullYear()} CiNE.. All rights reserved.</span>
+                        <span>This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
+                    </div>
+                </div>
+            </footer>;
+        }
+
+        /* ============================= APP ============================= */
+        function App() {
+            const route = useRoute();
+            useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [route.path]);
+            let page;
+            if (route.path.startsWith("/movie/")) page = <DetailsPage route={route} />;
+            else if (route.path.startsWith("/explore")) page = <ExplorePage route={route} />;
+            else if (route.path.startsWith("/watchlist")) page = <WatchlistPage />;
+            else page = <HomePage />;
+            return <ToastProvider><AuthProvider><WatchlistProvider>
+                <Navbar route={route} />
+                <main key={route.path} className="page-enter min-h-[70vh]">{page}</main>
+                <Footer />
+                <AuthModal />
+            </WatchlistProvider></AuthProvider></ToastProvider>;
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+
+</html>
