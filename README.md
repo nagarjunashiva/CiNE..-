@@ -6,7 +6,6 @@ A modern cinematic web application featuring 4K movie discovery, secure MongoDB 
 
 ## Highlights
 
-* **4K Cinematic Discovery**: Real-time trending, popular, and top-rated movies powered by TMDB API with Cloudflare Edge proxy and high-definition backdrops.
 * **Full-Stack Authentication**: Complete user authentication system built with Node.js, Express, MongoDB, and Nodemailer.
 * **Protected Watchlist**: Curate your favorite films and sync your personal collection across any device. Automatic redirection & login prompt for unauthenticated visitors.
 * **Interactive Sliding Auth Card**: Glassmorphism UI with smooth split-sliding animations, password visibility toggle, and instant email verification.
