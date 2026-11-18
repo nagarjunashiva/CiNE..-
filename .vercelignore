@@ -1,0 +1,11 @@
+.git
+.env
+*.env
+node_modules
+server/node_modules
+server/.mongodb-data
+server/.mongodb-bin
+.mongodb-data
+.mongodb-bin
+*.log
+start-server.bat
