@@ -9,11 +9,19 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 // Middleware: Verify MongoDB connection before database operations
-router.use((req, res, next) => {
+router.use(async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    // Wait briefly if it's connecting
+    for (let i = 0; i < 20; i++) {
+      if (mongoose.connection.readyState === 1) break;
+      await new Promise(r => setTimeout(r, 200));
+    }
+  }
+
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({
       success: false,
-      message: "Cloud database not connected. Please add your MongoDB Atlas URI (MONGODB_URI) in Vercel."
+      message: "Cloud database connecting or unavailable. Please try again in a few seconds."
     });
   }
   next();

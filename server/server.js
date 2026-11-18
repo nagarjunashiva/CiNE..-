@@ -24,14 +24,14 @@ app.use((req, res, next) => {
 });
 
 // Ensure database connection in serverless or regular environment
-let isConnected = false;
+let cachedDbPromise = null;
 
 app.use(async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     try {
       await initDatabase();
     } catch (e) {
-      // ignore
+      console.warn("[DB Middleware] Init error:", e.message);
     }
   }
   next();
@@ -68,22 +68,28 @@ app.get("/", (req, res) => {
 
 // Connect to MongoDB
 async function initDatabase() {
-  if (isConnected || mongoose.connection.readyState === 1) {
+  if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
 
   const customUri = process.env.MONGODB_URI;
 
   if (customUri && !customUri.includes("127.0.0.1") && !customUri.includes("localhost")) {
-    try {
+    if (!cachedDbPromise) {
       console.log(`[DB] Attempting connection to custom MONGODB_URI...`);
-      await mongoose.connect(customUri, { serverSelectionTimeoutMS: 5000 });
-      console.log(`[DB] Connected successfully to remote MongoDB Atlas`);
-      isConnected = true;
-      return mongoose.connection;
-    } catch (err) {
-      console.warn(`[DB] Could not connect to custom MONGODB_URI: ${err.message}`);
+      cachedDbPromise = mongoose.connect(customUri, {
+        serverSelectionTimeoutMS: 10000,
+        bufferCommands: false
+      }).then(m => {
+        console.log(`[DB] Connected successfully to remote MongoDB Atlas`);
+        return m;
+      }).catch(err => {
+        cachedDbPromise = null;
+        console.warn(`[DB] Could not connect to custom MONGODB_URI: ${err.message}`);
+        throw err;
+      });
     }
+    return cachedDbPromise;
   }
 
   // If running in a serverless environment like Vercel, skip MongoMemoryServer
