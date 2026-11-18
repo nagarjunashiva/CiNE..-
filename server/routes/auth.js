@@ -5,7 +5,19 @@ const User = require("../models/User");
 const { authMiddleware, JWT_SECRET } = require("../middleware/auth");
 const { sendVerificationOtp, sendWelcomeEmail, sendPasswordResetOtp } = require("../utils/mailer");
 
+const mongoose = require("mongoose");
 const router = express.Router();
+
+// Middleware: Verify MongoDB connection before database operations
+router.use((req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      message: "Cloud database not connected. Please add your MongoDB Atlas URI (MONGODB_URI) in Vercel."
+    });
+  }
+  next();
+});
 
 // Helper: Generate 6-digit OTP
 function generateOtp() {
