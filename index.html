@@ -1128,7 +1128,10 @@
         /* ============================= AUTH CONTEXT & BACKEND API ============================= */
         const AUTH_KEY = "cine.auth.user.v1";
         const TOKEN_KEY = "cine.auth.token.v1";
-        const API_BASE = "http://localhost:5000/api/auth";
+        const BACKEND_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
+            ? "http://localhost:5000"
+            : "";
+        const API_BASE = `${BACKEND_URL}/api/auth`;
 
         const AuthCtx = createContext();
         const useAuth = () => useContext(AuthCtx);
@@ -1158,7 +1161,7 @@
                 let active = true;
                 const checkHealth = async () => {
                     try {
-                        const res = await fetch("http://localhost:5000/api/health", { method: "GET" });
+                        const res = await fetch(`${BACKEND_URL}/api/health`, { method: "GET" });
                         if (res.ok && active) setBackendOnline(true);
                     } catch {
                         if (active) setBackendOnline(false);
@@ -1412,7 +1415,7 @@
             // If user logs in with token, sync watchlist from MongoDB
             useEffect(() => {
                 if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
-                    fetch("http://localhost:5000/api/auth/watchlist", {
+                    fetch(`${API_BASE}/watchlist`, {
                         headers: { Authorization: `Bearer ${auth.token}` }
                     }).then(r => r.json()).then(data => {
                         if (data.success && Array.isArray(data.watchlist)) {
@@ -1447,7 +1450,7 @@
                     });
                     toast.show(`Added "${pm.title}" to your Watchlist!`, "bookmark");
                     if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
-                        fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                        fetch(`${API_BASE}/watchlist/toggle`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -1487,7 +1490,7 @@
                 // If logged in, sync with MongoDB
                 if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
                     try {
-                        await fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                        await fetch(`${API_BASE}/watchlist/toggle`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -1516,7 +1519,7 @@
                 toast.show("Removed from watchlist", "trash-2");
                 if (auth.token && auth.token !== "demo_token" && auth.backendOnline) {
                     try {
-                        await fetch("http://localhost:5000/api/auth/watchlist/toggle", {
+                        await fetch(`${API_BASE}/watchlist/toggle`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

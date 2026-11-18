@@ -22,15 +22,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// Ensure database connection in serverless or regular environment
+let isConnected = false;
+
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await initDatabase();
+    } catch (e) {
+      // ignore
+    }
+  }
+  next();
+});
+
+// Routes (supporting both /api/auth and /auth)
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 // Health check endpoint
-app.get("/api/health", (req, res) => {
+app.get(["/api/health", "/health"], (req, res) => {
   res.json({
     status: "ok",
     app: "CiNE Authentication & Watchlist Backend",
-    db: mongoose.connection.readyState === 1 ? "connected" : "connecting",
+    db: mongoose.connection.readyState === 1 ? "connected" : (process.env.MONGODB_URI ? "connecting" : "ready_for_atlas"),
     timestamp: new Date().toISOString()
   });
 });
@@ -52,6 +67,30 @@ app.get("/", (req, res) => {
 
 // Connect to MongoDB
 async function initDatabase() {
+  if (isConnected || mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  const customUri = process.env.MONGODB_URI;
+
+  if (customUri && !customUri.includes("127.0.0.1") && !customUri.includes("localhost")) {
+    try {
+      console.log(`[DB] Attempting connection to custom MONGODB_URI...`);
+      await mongoose.connect(customUri, { serverSelectionTimeoutMS: 5000 });
+      console.log(`[DB] Connected successfully to remote MongoDB Atlas`);
+      isConnected = true;
+      return mongoose.connection;
+    } catch (err) {
+      console.warn(`[DB] Could not connect to custom MONGODB_URI: ${err.message}`);
+    }
+  }
+
+  // If running in a serverless environment like Vercel, skip MongoMemoryServer
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    console.warn(`[DB] In production/Vercel without active MONGODB_URI. Provide MONGODB_URI in Vercel settings.`);
+    return null;
+  }
+
   const path = require("path");
   const fs = require("fs");
 
@@ -61,19 +100,6 @@ async function initDatabase() {
   if (!fs.existsSync(mongoBinDir)) fs.mkdirSync(mongoBinDir, { recursive: true });
 
   process.env.MONGOMS_DOWNLOAD_DIR = mongoBinDir;
-
-  const customUri = process.env.MONGODB_URI;
-
-  if (customUri && !customUri.includes("127.0.0.1") && !customUri.includes("localhost")) {
-    try {
-      console.log(`[DB] Attempting connection to custom MONGODB_URI...`);
-      await mongoose.connect(customUri, { serverSelectionTimeoutMS: 5000 });
-      console.log(`[DB] Connected successfully to remote MongoDB Atlas`);
-      return;
-    } catch (err) {
-      console.warn(`[DB] Could not connect to custom MONGODB_URI: ${err.message}`);
-    }
-  }
 
   // Attempt local MongoDB on 27017 if already running
   try {
@@ -145,6 +171,11 @@ async function startServer() {
   });
 }
 
-startServer().catch(err => {
-  console.error("Fatal startup error:", err);
-});
+if (require.main === module) {
+  startServer().catch(err => {
+    console.error("Fatal startup error:", err);
+  });
+}
+
+module.exports = app;
+module.exports.initDatabase = initDatabase;
